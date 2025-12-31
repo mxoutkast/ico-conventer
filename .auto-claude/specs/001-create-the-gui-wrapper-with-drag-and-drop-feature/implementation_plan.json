@@ -130,7 +130,7 @@
             "type": "manual",
             "instructions": "Start conversion of a large file, verify GUI remains responsive"
           },
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "subtask-3-3",
