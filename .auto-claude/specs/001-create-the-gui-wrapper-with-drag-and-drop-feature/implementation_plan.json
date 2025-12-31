@@ -280,7 +280,7 @@
             "type": "manual",
             "instructions": "Review README.md, verify GUI section exists with clear instructions"
           },
-          "status": "pending"
+          "status": "completed"
         }
       ]
     }
@@ -419,9 +419,48 @@
       "checks": []
     }
   },
-  "qa_signoff": null,
+  "qa_signoff": {
+    "status": "approved",
+    "timestamp": "2026-01-01T04:05:34.536622",
+    "qa_session": 2,
+    "report_file": "qa_report.md",
+    "tests_passed": {
+      "unit": "3/3",
+      "integration": "1/1",
+      "e2e": "manual"
+    },
+    "verified_by": "qa_agent"
+  },
   "status": "in_progress",
   "planStatus": "in_progress",
   "updated_at": "2025-12-31T18:06:48.034Z",
-  "recoveryNote": "Task recovered from stuck state at 2025-12-31T18:06:48.034Z"
+  "recoveryNote": "Task recovered from stuck state at 2025-12-31T18:06:48.034Z",
+  "qa_iteration_history": [
+    {
+      "iteration": 1,
+      "status": "error",
+      "timestamp": "2025-12-31T20:00:15.274665+00:00",
+      "issues": [
+        {
+          "title": "QA error",
+          "description": "QA agent did not update implementation_plan.json"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "status": "approved",
+      "timestamp": "2025-12-31T20:07:33.819961+00:00",
+      "issues": [],
+      "duration_seconds": 438.54
+    }
+  ],
+  "qa_stats": {
+    "total_iterations": 2,
+    "last_iteration": 2,
+    "last_status": "approved",
+    "issues_by_type": {
+      "unknown": 1
+    }
+  }
 }
