@@ -145,7 +145,7 @@
             "type": "manual",
             "instructions": "Convert multiple files, verify progress bar updates and status indicators work"
           },
-          "status": "pending"
+          "status": "completed"
         }
       ]
     },
@@ -422,6 +422,6 @@
   "qa_signoff": null,
   "status": "in_progress",
   "planStatus": "in_progress",
-  "updated_at": "2026-01-01T01:25:00Z",
-  "recoveryNote": "Task recovered from stuck state at 2025-12-31T16:57:46.932Z"
+  "updated_at": "2025-12-31T18:06:48.034Z",
+  "recoveryNote": "Task recovered from stuck state at 2025-12-31T18:06:48.034Z"
 }
