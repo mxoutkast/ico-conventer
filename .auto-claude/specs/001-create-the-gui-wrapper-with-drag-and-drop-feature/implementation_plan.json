@@ -174,7 +174,7 @@
             "type": "manual",
             "instructions": "Verify size checkboxes are present and selectable, default to DEFAULT_SIZES"
           },
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "subtask-4-2",

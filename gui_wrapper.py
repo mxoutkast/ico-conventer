@@ -40,20 +40,30 @@ class IcoConverterGUI:
         self.root.geometry("800x600")
         self.root.minsize(600, 400)
         
-        # Initialize drag-and-drop
-        self._setup_drag_drop()
-        
-        # Setup UI components
-        self._setup_ui()
-        
         # State variables
         self.dropped_files: List[Path] = []
         self.output_dir: Optional[Path] = None
         self.selected_sizes: List[tuple] = DEFAULT_SIZES.copy()
         
+        # Size checkbox variables
+        self.size_vars = {
+            16: tk.IntVar(value=1),
+            32: tk.IntVar(value=1),
+            48: tk.IntVar(value=1),
+            64: tk.IntVar(value=1),
+            128: tk.IntVar(value=1),
+            256: tk.IntVar(value=1)
+        }
+        
         # Threading state
         self.conversion_thread: Optional[threading.Thread] = None
         self.is_converting: bool = False
+        
+        # Initialize drag-and-drop
+        self._setup_drag_drop()
+        
+        # Setup UI components
+        self._setup_ui()
     
     def _setup_drag_drop(self) -> None:
         """Configure drag-and-drop functionality for the main window."""
@@ -93,13 +103,32 @@ class IcoConverterGUI:
         )
         instructions.grid(row=1, column=0, pady=(0, 10), sticky=tk.W)
         
+        # Configuration frame for size selection
+        config_frame = ttk.LabelFrame(
+            main_frame,
+            text="Icon Sizes",
+            padding="10"
+        )
+        config_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
+        
+        # Size checkboxes
+        sizes = [16, 32, 48, 64, 128, 256]
+        for i, size in enumerate(sizes):
+            checkbox = ttk.Checkbutton(
+                config_frame,
+                text=f"{size}x{size}",
+                variable=self.size_vars[size],
+                command=self._update_selected_sizes
+            )
+            checkbox.grid(row=0, column=i, padx=5)
+        
         # Drop zone frame
         drop_zone = ttk.LabelFrame(
             main_frame,
             text="Drop Zone",
             padding="10"
         )
-        drop_zone.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
+        drop_zone.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
         drop_zone.columnconfigure(0, weight=1)
         drop_zone.rowconfigure(0, weight=1)
         
@@ -140,7 +169,7 @@ class IcoConverterGUI:
         
         # Control buttons frame
         button_frame = ttk.Frame(main_frame)
-        button_frame.grid(row=3, column=0, pady=(0, 10), sticky=tk.W)
+        button_frame.grid(row=4, column=0, pady=(0, 10), sticky=tk.W)
         
         # Clear button
         clear_button = ttk.Button(
@@ -173,7 +202,7 @@ class IcoConverterGUI:
             variable=self.progress_var,
             maximum=100
         )
-        progress_bar.grid(row=4, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
+        progress_bar.grid(row=5, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
         
         # Status label
         self.status_label = ttk.Label(
@@ -182,7 +211,7 @@ class IcoConverterGUI:
             relief=tk.SUNKEN,
             anchor=tk.W
         )
-        self.status_label.grid(row=5, column=0, sticky=(tk.W, tk.E))
+        self.status_label.grid(row=6, column=0, sticky=(tk.W, tk.E))
     
     def _setup_drop_zone_drag_drop(self, widget: tk.Widget) -> None:
         """
@@ -198,6 +227,14 @@ class IcoConverterGUI:
             widget.dnd_bind('<<DragLeave>>', lambda e: widget.configure(relief=tk.GROOVE))
         except Exception as e:
             print(f"Warning: Could not configure drag-and-drop for widget: {e}")
+    
+    def _update_selected_sizes(self) -> None:
+        """Update the selected_sizes list based on checkbox states."""
+        self.selected_sizes = []
+        for size, var in self.size_vars.items():
+            if var.get() == 1:
+                self.selected_sizes.append((size, size))
+        self.selected_sizes.sort()
     
     def _on_drop(self, event: tk.Event) -> None:
         """
