@@ -321,6 +321,7 @@ class IcoConverterGUI:
             added_count = 0
             skipped_count = 0
             invalid_count = 0
+            invalid_files = []
             
             for file_path in file_paths:
                 path = Path(file_path)
@@ -333,6 +334,7 @@ class IcoConverterGUI:
                         skipped_count += 1
                 else:
                     invalid_count += 1
+                    invalid_files.append(path.name)
             
             # Update status with detailed feedback
             if added_count > 0:
@@ -342,8 +344,16 @@ class IcoConverterGUI:
                 if invalid_count > 0:
                     message += f" (ignored {invalid_count} non-PNG file(s))"
                 self._update_status(message)
+                
+                # Show individual warnings for non-PNG files (following pattern from ico_converter.py)
+                for invalid_file in invalid_files:
+                    self._update_status(f"Warning: Skipping non-PNG file: {invalid_file}")
             elif skipped_count > 0:
                 self._update_status(f"All files already in list (skipped {skipped_count} duplicate(s))")
+            elif invalid_count > 0:
+                self._update_status(f"No valid PNG files found (ignored {invalid_count} non-PNG file(s))")
+                for invalid_file in invalid_files:
+                    self._update_status(f"Warning: Skipping non-PNG file: {invalid_file}")
             else:
                 self._update_status("No valid PNG files found")
                 
