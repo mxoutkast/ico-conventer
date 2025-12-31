@@ -15,7 +15,9 @@
           "id": "subtask-1-1",
           "description": "Add tkinterdnd2 to requirements.txt",
           "service": "main",
-          "files_to_modify": ["requirements.txt"],
+          "files_to_modify": [
+            "requirements.txt"
+          ],
           "files_to_create": [],
           "patterns_from": [],
           "verification": {
@@ -23,7 +25,7 @@
             "command": "cat requirements.txt | grep tkinterdnd2",
             "expected": "tkinterdnd2"
           },
-          "status": "completed"
+          "status": "pending"
         }
       ]
     },
@@ -32,7 +34,9 @@
       "name": "GUI Core Implementation",
       "type": "implementation",
       "description": "Create the main GUI wrapper with window setup, drag-and-drop area, and basic UI layout",
-      "depends_on": ["phase-1-setup"],
+      "depends_on": [
+        "phase-1-setup"
+      ],
       "parallel_safe": false,
       "subtasks": [
         {
@@ -40,8 +44,12 @@
           "description": "Create gui_wrapper.py with basic window setup and drag-and-drop initialization",
           "service": "main",
           "files_to_modify": [],
-          "files_to_create": ["gui_wrapper.py"],
-          "patterns_from": ["ico_converter.py"],
+          "files_to_create": [
+            "gui_wrapper.py"
+          ],
+          "patterns_from": [
+            "ico_converter.py"
+          ],
           "verification": {
             "type": "command",
             "command": "python gui_wrapper.py &",
@@ -53,7 +61,9 @@
           "id": "subtask-2-2",
           "description": "Implement drag-and-drop event handlers for file drop",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
           "patterns_from": [],
           "verification": {
@@ -66,7 +76,9 @@
           "id": "subtask-2-3",
           "description": "Create file list UI component to display dropped files",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
           "patterns_from": [],
           "verification": {
@@ -82,16 +94,22 @@
       "name": "Conversion Integration",
       "type": "implementation",
       "description": "Integrate conversion logic from ico_converter.py with progress tracking and threading",
-      "depends_on": ["phase-2-gui-core"],
+      "depends_on": [
+        "phase-2-gui-core"
+      ],
       "parallel_safe": false,
       "subtasks": [
         {
           "id": "subtask-3-1",
           "description": "Import and integrate convert_png_to_ico function from ico_converter.py",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
-          "patterns_from": ["ico_converter.py"],
+          "patterns_from": [
+            "ico_converter.py"
+          ],
           "verification": {
             "type": "command",
             "command": "python -c \"from gui_wrapper import convert_png_to_ico; print('Import OK')\"",
@@ -103,7 +121,9 @@
           "id": "subtask-3-2",
           "description": "Implement threaded conversion to prevent GUI freezing",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
           "patterns_from": [],
           "verification": {
@@ -116,7 +136,9 @@
           "id": "subtask-3-3",
           "description": "Add progress bar and status updates for conversion progress",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
           "patterns_from": [],
           "verification": {
@@ -132,16 +154,22 @@
       "name": "Configuration UI",
       "type": "implementation",
       "description": "Add UI controls for size selection and output directory configuration",
-      "depends_on": ["phase-2-gui-core"],
+      "depends_on": [
+        "phase-2-gui-core"
+      ],
       "parallel_safe": true,
       "subtasks": [
         {
           "id": "subtask-4-1",
           "description": "Add size selection checkboxes (16, 32, 48, 64, 128, 256)",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
-          "patterns_from": ["ico_converter.py"],
+          "patterns_from": [
+            "ico_converter.py"
+          ],
           "verification": {
             "type": "manual",
             "instructions": "Verify size checkboxes are present and selectable, default to DEFAULT_SIZES"
@@ -152,7 +180,9 @@
           "id": "subtask-4-2",
           "description": "Add output directory browser button and path display",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
           "patterns_from": [],
           "verification": {
@@ -168,16 +198,22 @@
       "name": "Error Handling and User Feedback",
       "type": "implementation",
       "description": "Implement comprehensive error handling and user feedback mechanisms",
-      "depends_on": ["phase-3-conversion-integration"],
+      "depends_on": [
+        "phase-3-conversion-integration"
+      ],
       "parallel_safe": false,
       "subtasks": [
         {
           "id": "subtask-5-1",
           "description": "Add validation for non-PNG files dropped on GUI",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
-          "patterns_from": ["ico_converter.py"],
+          "patterns_from": [
+            "ico_converter.py"
+          ],
           "verification": {
             "type": "manual",
             "instructions": "Drag a non-PNG file (e.g., .txt), verify warning message appears and file is not added"
@@ -188,9 +224,13 @@
           "id": "subtask-5-2",
           "description": "Add error display for failed conversions with detailed messages",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
-          "patterns_from": ["ico_converter.py"],
+          "patterns_from": [
+            "ico_converter.py"
+          ],
           "verification": {
             "type": "manual",
             "instructions": "Try to convert an invalid/corrupted PNG, verify error message displays in GUI"
@@ -201,7 +241,9 @@
           "id": "subtask-5-3",
           "description": "Add success indicators and completion summary",
           "service": "main",
-          "files_to_modify": ["gui_wrapper.py"],
+          "files_to_modify": [
+            "gui_wrapper.py"
+          ],
           "files_to_create": [],
           "patterns_from": [],
           "verification": {
@@ -217,16 +259,23 @@
       "name": "Documentation",
       "type": "cleanup",
       "description": "Update README.md with GUI usage instructions",
-      "depends_on": ["phase-3-conversion-integration", "phase-4-configuration-ui"],
+      "depends_on": [
+        "phase-3-conversion-integration",
+        "phase-4-configuration-ui"
+      ],
       "parallel_safe": true,
       "subtasks": [
         {
           "id": "subtask-6-1",
           "description": "Add GUI usage section to README.md with installation and running instructions",
           "service": "main",
-          "files_to_modify": ["README.md"],
+          "files_to_modify": [
+            "README.md"
+          ],
           "files_to_create": [],
-          "patterns_from": ["README.md"],
+          "patterns_from": [
+            "README.md"
+          ],
           "verification": {
             "type": "manual",
             "instructions": "Review README.md, verify GUI section exists with clear instructions"
@@ -239,16 +288,24 @@
   "summary": {
     "total_phases": 6,
     "total_subtasks": 13,
-    "services_involved": ["main"],
+    "services_involved": [
+      "main"
+    ],
     "parallelism": {
       "max_parallel_phases": 2,
       "parallel_groups": [
         {
-          "phases": ["phase-4-configuration-ui", "phase-3-conversion-integration"],
+          "phases": [
+            "phase-4-configuration-ui",
+            "phase-3-conversion-integration"
+          ],
           "reason": "Both depend only on phase-2-gui-core, work on different parts of the GUI"
         },
         {
-          "phases": ["phase-6-documentation", "phase-5-error-handling"],
+          "phases": [
+            "phase-6-documentation",
+            "phase-5-error-handling"
+          ],
           "reason": "Documentation can be written while error handling is implemented"
         }
       ],
@@ -261,7 +318,10 @@
     "risk_level": "medium",
     "skip_validation": false,
     "test_creation_phase": "post_implementation",
-    "test_types_required": ["unit", "integration"],
+    "test_types_required": [
+      "unit",
+      "integration"
+    ],
     "security_scanning_required": false,
     "staging_deployment_required": false,
     "acceptance_criteria": [
@@ -323,18 +383,32 @@
   "qa_acceptance": {
     "unit_tests": {
       "required": true,
-      "commands": ["python -c \"from gui_wrapper import *; print('Imports OK')\""],
+      "commands": [
+        "python -c \"from gui_wrapper import *; print('Imports OK')\""
+      ],
       "minimum_coverage": null
     },
     "integration_tests": {
       "required": true,
-      "commands": ["Manual: Test drag-and-drop with multiple files", "Manual: Test conversion with different size configurations"],
-      "services_to_test": ["main"]
+      "commands": [
+        "Manual: Test drag-and-drop with multiple files",
+        "Manual: Test conversion with different size configurations"
+      ],
+      "services_to_test": [
+        "main"
+      ]
     },
     "e2e_tests": {
       "required": true,
-      "commands": ["Manual: Complete workflow - launch, drag files, configure, convert, verify"],
-      "flows": ["single-file-conversion", "batch-conversion", "custom-sizes", "error-handling"]
+      "commands": [
+        "Manual: Complete workflow - launch, drag files, configure, convert, verify"
+      ],
+      "flows": [
+        "single-file-conversion",
+        "batch-conversion",
+        "custom-sizes",
+        "error-handling"
+      ]
     },
     "browser_verification": {
       "required": false,
@@ -345,5 +419,9 @@
       "checks": []
     }
   },
-  "qa_signoff": null
+  "qa_signoff": null,
+  "status": "in_progress",
+  "planStatus": "in_progress",
+  "updated_at": "2025-12-31T16:57:46.932Z",
+  "recoveryNote": "Task recovered from stuck state at 2025-12-31T16:57:46.932Z"
 }
