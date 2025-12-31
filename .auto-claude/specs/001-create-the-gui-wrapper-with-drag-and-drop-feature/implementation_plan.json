@@ -235,7 +235,7 @@
             "type": "manual",
             "instructions": "Try to convert an invalid/corrupted PNG, verify error message displays in GUI"
           },
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "subtask-5-3",

@@ -172,16 +172,18 @@ class IcoConverterGUI:
         # File list (Treeview)
         self.file_list = ttk.Treeview(
             drop_zone,
-            columns=('filename', 'size', 'status'),
+            columns=('filename', 'size', 'status', 'error'),
             show='headings',
             selectmode='extended'
         )
         self.file_list.heading('filename', text='Filename')
         self.file_list.heading('size', text='Size')
         self.file_list.heading('status', text='Status')
-        self.file_list.column('filename', width=350, minwidth=200)
+        self.file_list.heading('error', text='Error Details')
+        self.file_list.column('filename', width=250, minwidth=150)
         self.file_list.column('size', width=80, minwidth=60)
         self.file_list.column('status', width=100, minwidth=80)
+        self.file_list.column('error', width=300, minwidth=200)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Scrollbar for file list
@@ -430,11 +432,11 @@ class IcoConverterGUI:
             file_size = file_path.stat().st_size
             size_str = self._format_file_size(file_size)
             
-            # Insert file into list
-            self.file_list.insert('', tk.END, values=(file_path.name, size_str, 'Pending'))
+            # Insert file into list with empty error column
+            self.file_list.insert('', tk.END, values=(file_path.name, size_str, 'Pending', ''))
         except Exception as e:
             # If we can't get file size, still add the file
-            self.file_list.insert('', tk.END, values=(file_path.name, 'N/A', 'Pending'))
+            self.file_list.insert('', tk.END, values=(file_path.name, 'N/A', 'Pending', ''))
         
         # Update file counter
         self._update_file_counter()
@@ -495,18 +497,19 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status(f"Removed {len(selected_items)} file(s)")
     
-    def _update_file_status(self, file_path: Path, status: str) -> None:
+    def _update_file_status(self, file_path: Path, status: str, error_message: str = '') -> None:
         """
         Update the status of a specific file in the list.
         
         Args:
             file_path: Path to the file to update
             status: New status string
+            error_message: Optional error message to display
         """
         for item_id in self.file_list.get_children():
             values = self.file_list.item(item_id)['values']
             if values and values[0] == file_path.name:
-                self.file_list.item(item_id, values=(values[0], values[1], status))
+                self.file_list.item(item_id, values=(values[0], values[1], status, error_message))
                 break
     
     def _convert_files(self) -> None:
@@ -519,11 +522,11 @@ class IcoConverterGUI:
             self._update_status("Conversion already in progress...")
             return
         
-        # Reset file statuses
+        # Reset file statuses and clear error messages
         for item_id in self.file_list.get_children():
             values = self.file_list.item(item_id)['values']
             if values:
-                self.file_list.item(item_id, values=(values[0], values[1], 'Pending'))
+                self.file_list.item(item_id, values=(values[0], values[1], 'Pending', ''))
         
         # Update UI to show converting state
         self._set_converting_state(True)
@@ -543,6 +546,7 @@ class IcoConverterGUI:
         self._thread_safe_update_status(f"Converting {total_files} file(s)...")
         
         for i, input_path in enumerate(self.dropped_files, 1):
+            error_message = ''
             try:
                 # Determine output path
                 if self.output_dir:
@@ -555,18 +559,37 @@ class IcoConverterGUI:
                 
                 # Convert the file
                 if convert_png_to_ico(input_path, output_path, self.selected_sizes, verbose=False):
-                    self._thread_safe_update_file_status(input_path, "Success")
+                    self._thread_safe_update_file_status(input_path, "Success", '')
                     success_count += 1
                 else:
-                    self._thread_safe_update_file_status(input_path, "Failed")
+                    # Conversion failed but didn't raise an exception
+                    error_message = "Conversion failed - see console for details"
+                    self._thread_safe_update_file_status(input_path, "Failed", error_message)
                     error_count += 1
                 
                 # Update progress bar
                 progress = (i / total_files) * 100
                 self._thread_safe_update_progress(progress)
                 
+            except FileNotFoundError as e:
+                # File not found error
+                error_message = f"File not found: {e}"
+                self._thread_safe_update_file_status(input_path, "Error", error_message)
+                error_count += 1
+                
+            except PermissionError as e:
+                # Permission error
+                error_message = f"Permission denied: {e}"
+                self._thread_safe_update_file_status(input_path, "Error", error_message)
+                error_count += 1
+                
             except Exception as e:
-                self._thread_safe_update_file_status(input_path, "Error")
+                # Other errors - provide detailed error message following pattern from ico_converter.py
+                error_message = str(e)
+                # If error is too long, truncate it
+                if len(error_message) > 100:
+                    error_message = error_message[:97] + "..."
+                self._thread_safe_update_file_status(input_path, "Error", error_message)
                 error_count += 1
         
         # Show summary and reset converting state
@@ -625,15 +648,16 @@ class IcoConverterGUI:
         """
         self.root.after(0, lambda: self._update_status(message))
     
-    def _thread_safe_update_file_status(self, file_path: Path, status: str) -> None:
+    def _thread_safe_update_file_status(self, file_path: Path, status: str, error_message: str = '') -> None:
         """
         Update the status of a specific file in a thread-safe manner.
         
         Args:
             file_path: Path to the file to update
             status: New status string
+            error_message: Optional error message to display
         """
-        self.root.after(0, lambda: self._update_file_status(file_path, status))
+        self.root.after(0, lambda: self._update_file_status(file_path, status, error_message))
     
     def _thread_safe_update_progress(self, value: float) -> None:
         """
