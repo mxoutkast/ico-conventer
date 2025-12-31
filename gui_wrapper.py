@@ -16,6 +16,9 @@ except ImportError:
     print("Install it with: pip install tkinterdnd2")
     sys.exit(1)
 
+# Import conversion function from ico_converter
+from ico_converter import convert_png_to_ico
+
 
 # Standard icon sizes for Windows ICO files (from ico_converter.py)
 DEFAULT_SIZES = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
@@ -395,7 +398,47 @@ class IcoConverterGUI:
             self._update_status("No files to convert")
             return
         
-        self._update_status("Conversion not yet implemented")
+        total_files = len(self.dropped_files)
+        success_count = 0
+        error_count = 0
+        
+        self._update_status(f"Converting {total_files} file(s)...")
+        
+        for i, input_path in enumerate(self.dropped_files, 1):
+            try:
+                # Determine output path
+                if self.output_dir:
+                    output_path = self.output_dir / f"{input_path.stem}.ico"
+                else:
+                    output_path = input_path.parent / f"{input_path.stem}.ico"
+                
+                # Update status to show current file
+                self._update_status(f"Converting [{i}/{total_files}]: {input_path.name}")
+                
+                # Convert the file
+                if convert_png_to_ico(input_path, output_path, self.selected_sizes, verbose=False):
+                    self._update_file_status(input_path, "Success")
+                    success_count += 1
+                else:
+                    self._update_file_status(input_path, "Failed")
+                    error_count += 1
+                
+                # Update progress bar
+                progress = (i / total_files) * 100
+                self.progress_var.set(progress)
+                
+                # Update UI to refresh
+                self.root.update_idletasks()
+                
+            except Exception as e:
+                self._update_file_status(input_path, "Error")
+                error_count += 1
+        
+        # Show summary
+        if error_count == 0:
+            self._update_status(f"Conversion complete! Successfully converted {success_count} file(s)")
+        else:
+            self._update_status(f"Conversion complete! Success: {success_count}, Errors: {error_count}")
     
     def _update_status(self, message: str) -> None:
         """

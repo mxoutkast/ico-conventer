@@ -115,7 +115,7 @@
             "command": "python -c \"from gui_wrapper import convert_png_to_ico; print('Import OK')\"",
             "expected": "Import OK"
           },
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "subtask-3-2",
