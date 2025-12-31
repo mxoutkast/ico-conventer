@@ -98,14 +98,16 @@ class IcoConverterGUI:
         # File list (Treeview)
         self.file_list = ttk.Treeview(
             drop_zone,
-            columns=('filename', 'status'),
+            columns=('filename', 'size', 'status'),
             show='headings',
             selectmode='extended'
         )
         self.file_list.heading('filename', text='Filename')
+        self.file_list.heading('size', text='Size')
         self.file_list.heading('status', text='Status')
-        self.file_list.column('filename', width=400)
-        self.file_list.column('status', width=100)
+        self.file_list.column('filename', width=350, minwidth=200)
+        self.file_list.column('size', width=80, minwidth=60)
+        self.file_list.column('status', width=100, minwidth=80)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Scrollbar for file list
@@ -116,6 +118,14 @@ class IcoConverterGUI:
         )
         scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
         self.file_list.configure(yscrollcommand=scrollbar.set)
+        
+        # File counter label
+        self.file_counter = ttk.Label(
+            drop_zone,
+            text="0 files",
+            font=('Helvetica', 9)
+        )
+        self.file_counter.grid(row=1, column=0, columnspan=2, sticky=tk.W, pady=(5, 0))
         
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
@@ -131,6 +141,14 @@ class IcoConverterGUI:
             command=self._clear_file_list
         )
         clear_button.pack(side=tk.LEFT, padx=(0, 5))
+        
+        # Remove selected button
+        remove_button = ttk.Button(
+            button_frame,
+            text="Remove Selected",
+            command=self._remove_selected_files
+        )
+        remove_button.pack(side=tk.LEFT, padx=5)
         
         # Convert button
         convert_button = ttk.Button(
@@ -191,6 +209,9 @@ class IcoConverterGUI:
             
             # Add valid PNG files to the list
             added_count = 0
+            skipped_count = 0
+            invalid_count = 0
+            
             for file_path in file_paths:
                 path = Path(file_path)
                 if path.is_file() and path.suffix.lower() == '.png':
@@ -198,10 +219,21 @@ class IcoConverterGUI:
                         self.dropped_files.append(path)
                         self._add_file_to_list(path)
                         added_count += 1
+                    else:
+                        skipped_count += 1
+                else:
+                    invalid_count += 1
             
-            # Update status
+            # Update status with detailed feedback
             if added_count > 0:
-                self._update_status(f"Added {added_count} file(s) to list")
+                message = f"Added {added_count} file(s) to list"
+                if skipped_count > 0:
+                    message += f" (skipped {skipped_count} duplicate(s))"
+                if invalid_count > 0:
+                    message += f" (ignored {invalid_count} non-PNG file(s))"
+                self._update_status(message)
+            elif skipped_count > 0:
+                self._update_status(f"All files already in list (skipped {skipped_count} duplicate(s))")
             else:
                 self._update_status("No valid PNG files found")
                 
@@ -273,14 +305,89 @@ class IcoConverterGUI:
         Args:
             file_path: Path to the file to add
         """
-        self.file_list.insert('', tk.END, values=(file_path.name, 'Pending'))
+        try:
+            # Get file size in human-readable format
+            file_size = file_path.stat().st_size
+            size_str = self._format_file_size(file_size)
+            
+            # Insert file into list
+            self.file_list.insert('', tk.END, values=(file_path.name, size_str, 'Pending'))
+        except Exception as e:
+            # If we can't get file size, still add the file
+            self.file_list.insert('', tk.END, values=(file_path.name, 'N/A', 'Pending'))
+        
+        # Update file counter
+        self._update_file_counter()
+    
+    def _update_file_counter(self) -> None:
+        """Update the file counter label."""
+        count = len(self.dropped_files)
+        self.file_counter.config(text=f"{count} file{'s' if count != 1 else ''}")
+    
+    def _format_file_size(self, size_bytes: int) -> str:
+        """
+        Format file size in human-readable format.
+        
+        Args:
+            size_bytes: File size in bytes
+            
+        Returns:
+            Formatted size string (e.g., "1.5 MB")
+        """
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if size_bytes < 1024.0:
+                return f"{size_bytes:.1f} {unit}"
+            size_bytes /= 1024.0
+        return f"{size_bytes:.1f} TB"
     
     def _clear_file_list(self) -> None:
         """Clear all files from the list."""
         self.dropped_files.clear()
         self.file_list.delete(*self.file_list.get_children())
         self.progress_var.set(0)
+        self._update_file_counter()
         self._update_status("List cleared")
+    
+    def _remove_selected_files(self) -> None:
+        """Remove selected files from the list."""
+        selected_items = self.file_list.selection()
+        if not selected_items:
+            self._update_status("No files selected")
+            return
+        
+        # Get filenames of selected items
+        selected_filenames = set()
+        for item_id in selected_items:
+            values = self.file_list.item(item_id)['values']
+            if values:
+                selected_filenames.add(values[0])
+        
+        # Remove from dropped_files list
+        self.dropped_files = [
+            path for path in self.dropped_files
+            if path.name not in selected_filenames
+        ]
+        
+        # Remove from treeview
+        for item_id in selected_items:
+            self.file_list.delete(item_id)
+        
+        self._update_file_counter()
+        self._update_status(f"Removed {len(selected_items)} file(s)")
+    
+    def _update_file_status(self, file_path: Path, status: str) -> None:
+        """
+        Update the status of a specific file in the list.
+        
+        Args:
+            file_path: Path to the file to update
+            status: New status string
+        """
+        for item_id in self.file_list.get_children():
+            values = self.file_list.item(item_id)['values']
+            if values and values[0] == file_path.name:
+                self.file_list.item(item_id, values=(values[0], values[1], status))
+                break
     
     def _convert_files(self) -> None:
         """Start the conversion process for all files in the list."""
