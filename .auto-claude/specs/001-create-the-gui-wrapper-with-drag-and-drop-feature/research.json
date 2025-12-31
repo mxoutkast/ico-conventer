@@ -1,0 +1,289 @@
+{
+  "integrations_researched": [
+    {
+      "name": "Pillow (PIL)",
+      "type": "library",
+      "verified_package": {
+        "name": "Pillow",
+        "install_command": "pip install Pillow>=9.0.0",
+        "version": "11.0.0 (verified installed)",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "from PIL import Image"
+        ],
+        "initialization": "img = Image.open(input_path)",
+        "key_functions": [
+          "Image.open(path)",
+          "img.convert('RGBA')",
+          "img.save(output_path, format='ICO', sizes=sizes)"
+        ],
+        "verified_against": "Installed package verification + existing codebase usage in ico_converter.py"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": [],
+        "dependencies": []
+      },
+      "infrastructure": {
+        "requires_docker": false,
+        "docker_image": null,
+        "ports": [],
+        "volumes": []
+      },
+      "gotchas": [
+        "ICO format requires square dimensions for each size",
+        "Must convert to RGBA mode for transparency support",
+        "Source image must be at least as large as the largest icon size requested"
+      ],
+      "research_sources": [
+        "Existing codebase: ico_converter.py",
+        "Local pip installation verification"
+      ]
+    },
+    {
+      "name": "Tkinter",
+      "type": "library",
+      "verified_package": {
+        "name": "tkinter",
+        "install_command": "No installation needed - part of Python standard library",
+        "version": "Built-in with Python 3.x",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "import tkinter as tk",
+          "from tkinter import filedialog, messagebox"
+        ],
+        "initialization": "root = tk.Tk()",
+        "key_functions": [
+          "root.title('Window Title')",
+          "root.geometry('800x600')",
+          "widget.pack()",
+          "filedialog.askopenfilename()",
+          "messagebox.showinfo()"
+        ],
+        "verified_against": "Python standard library documentation"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": [],
+        "dependencies": [
+          "tkinterdnd2 (for drag and drop support)"
+        ]
+      },
+      "infrastructure": {
+        "requires_docker": false,
+        "docker_image": null,
+        "ports": [],
+        "volumes": []
+      },
+      "gotchas": [
+        "Native drag and drop not supported in standard Tkinter",
+        "Requires tkinterdnd2 extension for drag and drop functionality",
+        "tkinterdnd2 may require separate installation on some platforms",
+        "Limited styling options compared to modern frameworks",
+        "macOS requires additional setup for tkinterdnd2"
+      ],
+      "research_sources": [
+        "Python standard library documentation"
+      ]
+    },
+    {
+      "name": "tkinterdnd2",
+      "type": "library",
+      "verified_package": {
+        "name": "tkinterdnd2",
+        "install_command": "pip install tkinterdnd2",
+        "version": "Latest stable",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "from tkinterdnd2 import TkinterDnD, DND_FILES"
+        ],
+        "initialization": "root = TkinterDnD.Tk()",
+        "key_functions": [
+          "widget.drop_target_register(DND_FILES)",
+          "widget.dnd_bind('<<Drop>>', callback_function)",
+          "event.data (contains dropped file paths)"
+        ],
+        "verified_against": "tkinterdnd2 documentation and community usage patterns"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": [],
+        "dependencies": [
+          "tkinter (built-in)"
+        ]
+      },
+      "infrastructure": {
+        "requires_docker": false,
+        "docker_image": null,
+        "ports": [],
+        "volumes": []
+      },
+      "gotchas": [
+        "Requires TkinterDnD.Tk() instead of tk.Tk() for root window",
+        "Drop event data contains file paths with curly braces on Windows",
+        "Platform-specific behavior differences (Windows vs Linux vs macOS)",
+        "Must call drop_target_register() before dnd_bind()",
+        "On macOS, may require tcl/tk extensions to be properly installed"
+      ],
+      "research_sources": [
+        "tkinterdnd2 PyPI package documentation",
+        "Community tutorials and examples"
+      ]
+    },
+    {
+      "name": "PyQt5",
+      "type": "library",
+      "verified_package": {
+        "name": "PyQt5",
+        "install_command": "pip install PyQt5",
+        "version": "5.15.x or later",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget",
+          "from PyQt5.QtCore import Qt"
+        ],
+        "initialization": "app = QApplication(sys.argv)",
+        "key_functions": [
+          "widget.setAcceptDrops(True)",
+          "widget.dragEnterEvent(event)",
+          "widget.dropEvent(event)",
+          "event.mimeData().urls() (to get dropped files)"
+        ],
+        "verified_against": "Qt for Python documentation"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": [],
+        "dependencies": []
+      },
+      "infrastructure": {
+        "requires_docker": false,
+        "docker_image": null,
+        "ports": [],
+        "volumes": []
+      },
+      "gotchas": [
+        "Larger dependency (~100MB+)",
+        "Requires QApplication instance (only one per process)",
+        "Must handle event overrides properly",
+        "More complex API than Tkinter",
+        "GPL license (commercial license available)",
+        "Windows may require additional Visual C++ runtime"
+      ],
+      "research_sources": [
+        "Qt for Python official documentation",
+        "PyQt5 reference documentation"
+      ]
+    },
+    {
+      "name": "PySide6",
+      "type": "library",
+      "verified_package": {
+        "name": "PySide6",
+        "install_command": "pip install PySide6",
+        "version": "6.0.x or later",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget",
+          "from PySide6.QtCore import Qt"
+        ],
+        "initialization": "app = QApplication(sys.argv)",
+        "key_functions": [
+          "widget.setAcceptDrops(True)",
+          "widget.dragEnterEvent(event)",
+          "widget.dropEvent(event)",
+          "event.mimeData().urls() (to get dropped files)"
+        ],
+        "verified_against": "Qt for Python documentation"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": [],
+        "dependencies": []
+      },
+      "infrastructure": {
+        "requires_docker": false,
+        "docker_image": null,
+        "ports": [],
+        "volumes": []
+      },
+      "gotchas": [
+        "Larger dependency (~100MB+)",
+        "Requires QApplication instance (only one per process)",
+        "Must handle event overrides properly",
+        "More complex API than Tkinter",
+        "LGPL license (more permissive than PyQt5)",
+        "Official Qt for Python binding (recommended by Qt Company)",
+        "Windows may require additional Visual C++ runtime"
+      ],
+      "research_sources": [
+        "Qt for Python official documentation",
+        "PySide6 reference documentation"
+      ]
+    }
+  ],
+  "unverified_claims": [
+    {
+      "claim": "tkinterdnd2 works seamlessly on all platforms",
+      "reason": "Platform-specific setup may be required, especially on macOS. Not verified through testing.",
+      "risk_level": "medium"
+    },
+    {
+      "claim": "PyQt5/PySide6 drag and drop is more robust than tkinterdnd2",
+      "reason": "Comparative analysis not performed. Both have different trade-offs.",
+      "risk_level": "low"
+    }
+  ],
+  "recommendations": [
+    "For a simple GUI wrapper with drag-and-drop, recommend starting with Tkinter + tkinterdnd2 due to minimal dependencies and built-in availability",
+    "If a more professional appearance and advanced features are needed, consider PySide6 (LGPL license, official Qt binding)",
+    "Pillow is already verified and working in the codebase - no changes needed",
+    "Consider implementing both Tkinter and Qt options to allow user choice, or start with Tkinter for MVP",
+    "Test drag-and-drop functionality on all target platforms (Windows, Linux, macOS) as behavior varies",
+    "Handle file path parsing carefully for drag-and-drop events (especially curly braces on Windows with tkinterdnd2)"
+  ],
+  "framework_comparison": {
+    "tkinter": {
+      "pros": [
+        "Built into Python standard library",
+        "Lightweight (no additional dependencies)",
+        "Simple API",
+        "Fast startup time"
+      ],
+      "cons": [
+        "Limited styling options",
+        "Requires tkinterdnd2 for drag-and-drop",
+        "Less professional appearance",
+        "Platform-specific quirks"
+      ],
+      "best_for": "Simple tools, quick prototypes, minimal dependencies"
+    },
+    "PyQt5/PySide6": {
+      "pros": [
+        "Professional appearance",
+        "Built-in drag-and-drop support",
+        "Rich widget library",
+        "Excellent documentation",
+        "Cross-platform consistency"
+      ],
+      "cons": [
+        "Large dependency size (~100MB+)",
+        "More complex API",
+        "Slower startup time",
+        "Additional installation required"
+      ],
+      "best_for": "Professional applications, complex UIs, polished user experience"
+    }
+  },
+  "created_at": "2025-12-31T17:00:00Z"
+}

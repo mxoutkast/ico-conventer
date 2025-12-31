@@ -1,0 +1,61 @@
+{
+  "complexity": "standard",
+  "workflow_type": "feature",
+  "confidence": 0.85,
+  "reasoning": "Creating a new GUI wrapper with drag-and-drop for an existing CLI tool. Requires choosing a GUI framework and implementing file handling, but scope is contained to adding a new interface to existing functionality.",
+  "analysis": {
+    "scope": {
+      "estimated_files": 4,
+      "estimated_services": 1,
+      "is_cross_cutting": false,
+      "notes": "New GUI layer that will integrate with existing conversion logic. Likely need: main GUI file, UI components, possibly a wrapper module for the converter, and maybe a config file."
+    },
+    "integrations": {
+      "external_services": [],
+      "new_dependencies": ["tkinter (built-in) or PyQt5/PySide6"],
+      "research_needed": true,
+      "notes": "Need to research and choose a GUI framework. Tkinter is built-in but limited; PyQt offers better features but requires installation. Drag-and-drop API needs to be learned."
+    },
+    "infrastructure": {
+      "docker_changes": false,
+      "database_changes": false,
+      "config_changes": false,
+      "notes": "No infrastructure changes required. GUI runs as a desktop application."
+    },
+    "knowledge": {
+      "patterns_exist": false,
+      "research_required": true,
+      "unfamiliar_tech": ["GUI framework (Tkinter/PyQt)", "drag-and-drop API"],
+      "notes": "No existing GUI code in the project. Need to research framework choice and drag-and-drop implementation patterns."
+    },
+    "risk": {
+      "level": "low",
+      "concerns": ["GUI framework choice affects UX and maintenance", "Drag-and-drop behavior may vary across platforms", "Error handling in GUI context vs CLI"],
+      "notes": "Low risk because CLI tool remains functional. This is additive functionality, not a replacement."
+    }
+  },
+  "recommended_phases": [
+    "discovery",
+    "requirements",
+    "research",
+    "context",
+    "spec_writing",
+    "planning",
+    "validation"
+  ],
+  "flags": {
+    "needs_research": true,
+    "needs_self_critique": false,
+    "needs_infrastructure_setup": false
+  },
+  "validation_recommendations": {
+    "risk_level": "medium",
+    "skip_validation": false,
+    "minimal_mode": false,
+    "test_types_required": ["unit", "integration"],
+    "security_scan_required": false,
+    "staging_deployment_required": false,
+    "reasoning": "New GUI functionality requires unit tests for UI logic and integration tests for drag-and-drop file handling. No security concerns as this is a local desktop tool. No staging deployment needed."
+  },
+  "created_at": "2026-01-01T00:50:00Z"
+}

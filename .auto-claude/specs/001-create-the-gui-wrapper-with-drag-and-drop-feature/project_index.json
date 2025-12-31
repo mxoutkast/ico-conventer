@@ -1,0 +1,33 @@
+{
+  "project_root": "D:\\ico-conventer",
+  "project_type": "single",
+  "services": {
+    "main": {
+      "name": "main",
+      "path": "D:\\ico-conventer",
+      "language": "Python",
+      "framework": null,
+      "type": "desktop",
+      "package_manager": "pip",
+      "dependencies": [
+        "Pillow>=9.0.0"
+      ],
+      "dev_command": "python gui_wrapper.py",
+      "test_command": "python -m pytest tests/ (if tests exist)",
+      "port": null
+    }
+  },
+  "infrastructure": {
+    "docker": false,
+    "database": null,
+    "ci_cd": false
+  },
+  "conventions": {
+    "linter": null,
+    "formatter": null,
+    "testing": null,
+    "code_style": "Simple, functional style with type hints",
+    "file_organization": "Single-file scripts",
+    "error_handling": "Try/except with user-friendly messages"
+  }
+}
