@@ -250,7 +250,7 @@
             "type": "manual",
             "instructions": "Convert files successfully, verify green status indicators and completion summary appear"
           },
-          "status": "pending"
+          "status": "completed"
         }
       ]
     },
