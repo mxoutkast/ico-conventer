@@ -66,6 +66,52 @@ python ico_converter.py *.png --dry-run
 python ico_converter.py image.png -v
 ```
 
+## GUI Usage
+
+The PNG to ICO Converter also includes a user-friendly graphical interface with drag-and-drop functionality.
+
+### GUI Setup
+
+#### Install GUI Dependencies
+
+The GUI requires an additional package for drag-and-drop functionality:
+
+```bash
+pip install tkinterdnd2
+```
+
+#### Running the GUI
+
+```bash
+python gui_wrapper.py
+```
+
+### GUI Features
+
+- **Drag and Drop**: Simply drag PNG files from your file explorer and drop them into the application window
+- **Icon Size Selection**: Choose which icon sizes to embed (16x16, 32x32, 48x48, 64x64, 128x128, 256x256)
+- **Output Directory**: Select a custom output directory or save ICO files alongside the original PNGs
+- **Batch Processing**: Convert multiple files at once
+- **Progress Tracking**: Real-time progress bar and status updates
+- **Error Display**: Detailed error messages for any conversion failures
+- **File Management**: View file list, remove selected files, or clear the entire list
+
+### Using the GUI
+
+1. **Launch the application**: Run `python gui_wrapper.py`
+2. **Add files**: Drag and drop PNG files into the drop zone, or use the file browser (coming soon)
+3. **Configure options**:
+   - Select desired icon sizes using the checkboxes
+   - Optionally choose an output directory (click "Browse..." to select, or "Clear" to save with input files)
+4. **Convert**: Click the "Convert" button to start the conversion process
+5. **View results**: Check the status column for success/error messages
+
+### GUI Requirements
+
+- Python 3.6+
+- Pillow >= 9.0.0
+- tkinterdnd2 >= 0.3.0
+
 ## Features
 
 - **Multiple Icon Sizes**: Embeds standard Windows icon sizes (16, 32, 48, 64, 128, 256) in a single ICO file
