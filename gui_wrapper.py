@@ -186,6 +186,13 @@ class IcoConverterGUI:
         self.file_list.column('error', width=300, minwidth=200)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Configure tags for different statuses with colors
+        self.file_list.tag_configure('success', foreground='green')
+        self.file_list.tag_configure('error', foreground='red')
+        self.file_list.tag_configure('failed', foreground='red')
+        self.file_list.tag_configure('pending', foreground='gray')
+        self.file_list.tag_configure('converting', foreground='blue')
+        
         # Scrollbar for file list
         scrollbar = ttk.Scrollbar(
             drop_zone,
@@ -432,11 +439,11 @@ class IcoConverterGUI:
             file_size = file_path.stat().st_size
             size_str = self._format_file_size(file_size)
             
-            # Insert file into list with empty error column
-            self.file_list.insert('', tk.END, values=(file_path.name, size_str, 'Pending', ''))
+            # Insert file into list with empty error column and pending tag
+            self.file_list.insert('', tk.END, values=(file_path.name, size_str, 'Pending', ''), tags=('pending',))
         except Exception as e:
             # If we can't get file size, still add the file
-            self.file_list.insert('', tk.END, values=(file_path.name, 'N/A', 'Pending', ''))
+            self.file_list.insert('', tk.END, values=(file_path.name, 'N/A', 'Pending', ''), tags=('pending',))
         
         # Update file counter
         self._update_file_counter()
@@ -509,7 +516,18 @@ class IcoConverterGUI:
         for item_id in self.file_list.get_children():
             values = self.file_list.item(item_id)['values']
             if values and values[0] == file_path.name:
-                self.file_list.item(item_id, values=(values[0], values[1], status, error_message))
+                # Determine tag based on status
+                tag = 'pending'
+                if status == 'Success':
+                    tag = 'success'
+                elif status == 'Error':
+                    tag = 'error'
+                elif status == 'Failed':
+                    tag = 'failed'
+                elif status == 'Converting':
+                    tag = 'converting'
+                
+                self.file_list.item(item_id, values=(values[0], values[1], status, error_message), tags=(tag,))
                 break
     
     def _convert_files(self) -> None:
@@ -522,11 +540,11 @@ class IcoConverterGUI:
             self._update_status("Conversion already in progress...")
             return
         
-        # Reset file statuses and clear error messages
+        # Reset file statuses and clear error messages with pending tag
         for item_id in self.file_list.get_children():
             values = self.file_list.item(item_id)['values']
             if values:
-                self.file_list.item(item_id, values=(values[0], values[1], 'Pending', ''))
+                self.file_list.item(item_id, values=(values[0], values[1], 'Pending', ''), tags=('pending',))
         
         # Update UI to show converting state
         self._set_converting_state(True)
@@ -548,6 +566,9 @@ class IcoConverterGUI:
         for i, input_path in enumerate(self.dropped_files, 1):
             error_message = ''
             try:
+                # Update status to "Converting" before processing
+                self._thread_safe_update_file_status(input_path, "Converting", '')
+                
                 # Determine output path
                 if self.output_dir:
                     output_path = self.output_dir / f"{input_path.stem}.ico"
@@ -596,10 +617,13 @@ class IcoConverterGUI:
         self.is_converting = False
         self._thread_safe_set_converting_state(False)
         
+        # Build detailed completion summary
         if error_count == 0:
-            self._thread_safe_update_status(f"Conversion complete! Successfully converted {success_count} file(s)")
+            summary = f"✓ Conversion complete! Successfully converted {success_count} file(s)"
         else:
-            self._thread_safe_update_status(f"Conversion complete! Success: {success_count}, Errors: {error_count}")
+            summary = f"Conversion complete! Success: {success_count}, Errors: {error_count}"
+        
+        self._thread_safe_update_status(summary)
     
     def _set_converting_state(self, converting: bool) -> None:
         """
