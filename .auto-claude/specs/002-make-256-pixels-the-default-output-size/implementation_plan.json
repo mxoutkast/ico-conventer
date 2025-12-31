@@ -49,8 +49,47 @@
     "complexity": "simple",
     "estimated_sessions": 1
   },
-  "status": "in_progress",
-  "planStatus": "in_progress",
-  "updated_at": "2025-12-31T16:57:40.807Z",
-  "recoveryNote": "Task recovered from stuck state at 2025-12-31T16:57:40.807Z"
+  "status": "completed",
+  "planStatus": "completed",
+  "updated_at": "2025-01-01T13:00:00Z",
+  "qa_signoff": {
+    "status": "approved",
+    "timestamp": "2025-01-01T13:00:00Z",
+    "qa_session": 1,
+    "report_file": "qa_report.md",
+    "tests_passed": {
+      "unit": "N/A",
+      "integration": "N/A",
+      "e2e": "N/A"
+    },
+    "verified_by": "qa_agent",
+    "all_criteria_met": true,
+    "issues_found": {
+      "critical": 0,
+      "major": 0,
+      "minor": 0
+    }
+  },
+  "qa_iteration_history": [
+    {
+      "iteration": 1,
+      "status": "approved",
+      "timestamp": "2025-12-31T17:02:27.654706+00:00",
+      "issues": [],
+      "duration_seconds": 235.94
+    },
+    {
+      "iteration": 1,
+      "status": "approved",
+      "timestamp": "2025-12-31T17:02:43.584429+00:00",
+      "issues": [],
+      "duration_seconds": 211.85
+    }
+  ],
+  "qa_stats": {
+    "total_iterations": 2,
+    "last_iteration": 1,
+    "last_status": "approved",
+    "issues_by_type": {}
+  }
 }

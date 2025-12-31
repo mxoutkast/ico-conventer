@@ -1,11 +1,11 @@
 {
   "active": true,
   "spec": "002-make-256-pixels-the-default-output-size",
-  "state": "building",
+  "state": "complete",
   "subtasks": {
-    "completed": 1,
+    "completed": 2,
     "total": 2,
-    "in_progress": 1,
+    "in_progress": 0,
     "failed": 0
   },
   "phase": {
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 2,
-    "started_at": "2026-01-01T00:54:51.583161"
+    "number": 1,
+    "started_at": "2026-01-01T00:57:44.432409"
   },
-  "last_update": "2026-01-01T00:56:25.193614"
+  "last_update": "2026-01-01T00:59:11.722023"
 }
