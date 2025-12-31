@@ -189,7 +189,7 @@
             "type": "manual",
             "instructions": "Click browse button, select directory, verify path displays correctly"
           },
-          "status": "pending"
+          "status": "completed"
         }
       ]
     },

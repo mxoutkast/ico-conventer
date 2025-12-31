@@ -58,3 +58,102 @@ Example:
   source auto-claude/.venv/bin/activate && python auto-claude/run.py --spec 001 --parallel 2
 
 === END SESSION 1 ===
+
+=== SESSION 2: Subtask 4-1 Implementation ===
+
+Date: 2026-01-01T01:00:00Z
+Subtask: subtask-4-1
+Description: Add size selection checkboxes (16, 32, 48, 64, 128, 256)
+
+Implementation Details:
+- Verified existing implementation in gui_wrapper.py
+- Size selection checkboxes already implemented in _setup_ui() method
+- Checkboxes created for sizes: 16, 32, 48, 64, 128, 256
+- All checkboxes default to checked (value=1) matching DEFAULT_SIZES
+- size_vars dictionary stores checkbox states for each size
+- _update_selected_sizes() method updates selected_sizes list based on checkbox states
+- Checkboxes displayed in "Icon Sizes" LabelFrame with proper labels (e.g., "16x16")
+
+Verification Performed:
+- Syntax validation: Passed (python -m py_compile gui_wrapper.py)
+- Automated verification tests:
+  * Checkbox existence: ✓ All 6 checkboxes created
+  * Checkbox labels: ✓ Correct labels (16x16, 32x32, 48x48, 64x64, 128x128, 256x256)
+  * Default values: ✓ All checkboxes default to checked
+  * Default selected sizes: ✓ Matches DEFAULT_SIZES
+  * Unchecking functionality: ✓ Works correctly
+  * Multiple selection: ✓ Can select/deselect multiple sizes
+  * Rechecking functionality: ✓ Can restore all selections
+  * Frame label: ✓ Correctly labeled "Icon Sizes"
+
+Quality Checklist:
+- [x] Follows patterns from reference files
+- [x] No console.log/print debugging statements
+- [x] Error handling in place
+- [x] Verification passes
+- [x] Clean commit with descriptive message
+
+Git Commit:
+- Commit hash: 5768405
+- Message: "auto-claude: subtask-4-1 - Add size selection checkboxes (16, 32, 48, 64, 128"
+
+Status: COMPLETED ✓
+
+=== END SESSION 2 ===
+
+=== SESSION 3: Subtask 4-2 Implementation ===
+
+Date: 2026-01-01T01:00:00Z
+Subtask: subtask-4-2
+Description: Add output directory browser button and path display
+
+Implementation Details:
+- Added output_dir_var state variable to track selected output directory
+- Created "Output Directory" LabelFrame in UI (row 3)
+- Added output path display label showing current directory or "Same as input files"
+- Implemented "Browse..." button to open directory selection dialog
+- Implemented "Clear" button to reset output directory to default
+- Added _browse_output_directory() method with error handling
+- Added _clear_output_directory() method to revert to default behavior
+- Updated UI grid layout to accommodate new output directory frame
+- Conversion logic already uses output_dir correctly (verified in _run_conversion)
+- Path display shows relative path when possible, otherwise absolute path
+
+Features Implemented:
+- ✓ Browse button opens filedialog.askdirectory()
+- ✓ Selected directory path displays in label
+- ✓ Clear button resets to "Same as input files"
+- ✓ Status updates when directory is selected or cleared
+- ✓ Error handling for directory selection failures
+- ✓ Integration with existing conversion logic
+
+Verification Performed:
+- Syntax validation: Passed (python -m py_compile gui_wrapper.py)
+- Automated verification tests:
+  * GUI class import: ✓ Successfully imported
+  * output_dir_var exists: ✓ Variable found
+  * Initial value: ✓ "Same as input files"
+  * output_dir initial state: ✓ None
+  * _browse_output_directory method: ✓ Exists
+  * _clear_output_directory method: ✓ Exists
+  * _clear_output_directory functionality: ✓ Works correctly
+  * output_dir can be set programmatically: ✓ Works
+  * Output directory label widget: ✓ Found
+  * Browse button widget: ✓ Found
+  * Clear button widget: ✓ Found
+  * Conversion uses output_dir: ✓ Verified in _run_conversion
+
+Quality Checklist:
+- [x] Follows patterns from reference files
+- [x] No console.log/print debugging statements
+- [x] Error handling in place
+- [x] Verification passes
+- [x] Clean commit with descriptive message
+
+Git Commit:
+- Commit hash: 626ca10
+- Message: "auto-claude: subtask-4-2 - Add output directory browser button and path display"
+
+Status: COMPLETED ✓
+
+=== END SESSION 3 ===
