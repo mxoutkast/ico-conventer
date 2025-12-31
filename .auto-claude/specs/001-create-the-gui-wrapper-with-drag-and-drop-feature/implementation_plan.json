@@ -55,7 +55,7 @@
             "command": "python gui_wrapper.py &",
             "expected": "GUI window opens without errors"
           },
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "subtask-2-2",
@@ -70,7 +70,7 @@
             "type": "manual",
             "instructions": "Run GUI, drag a PNG file onto the window, verify it appears in the file list"
           },
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "subtask-2-3",

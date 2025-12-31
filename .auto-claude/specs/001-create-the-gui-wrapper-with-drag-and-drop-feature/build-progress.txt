@@ -126,3 +126,145 @@ Next Steps:
 - Next subtask: subtask-2-1 - Create gui_wrapper.py with basic window setup and drag-and-drop initialization
 
 === END SESSION 3 ===
+
+=== SESSION 4: SUBTASK-2-1 COMPLETION ===
+
+Date: 2026-01-01T01:15:00Z
+
+Subtask: subtask-2-1 - Create gui_wrapper.py with basic window setup and drag-and-drop initialization
+Status: COMPLETED
+
+Changes Made:
+- Created gui_wrapper.py with complete GUI application structure
+- Implemented IcoConverterGUI class with window setup
+- Configured drag-and-drop using tkinterdnd2
+- Created main UI layout with:
+  * Title and instructions
+  * File list display with scrollbar
+  * Add Files / Clear All / Remove Selected buttons
+  * Output directory selection with browse button
+  * Icon size checkboxes (16, 32, 48, 64, 128, 256)
+  * Convert button (placeholder for now)
+  * Status bar
+- Implemented _setup_drag_drop() method for drag-and-drop initialization
+- Implemented _on_drop() event handler (basic structure)
+- Implemented file management methods: _add_files_dialog(), _add_files(), _clear_files(), _remove_selected()
+- Implemented output directory browser: _browse_output_dir()
+- Implemented _convert_files() placeholder method
+- Followed patterns from ico_converter.py:
+  * Used same DEFAULT_SIZES constant
+  * Used Path objects for file handling
+  * Used type hints throughout
+  * Used clean, functional Python style
+
+Code Quality:
+- [x] Follows patterns from ico_converter.py
+- [x] Uses type hints consistently
+- [x] Proper docstrings for all methods
+- [x] No debug print statements
+- [x] Error handling in place (try/except for tkinterdnd2 import)
+- [x] Clean, readable code structure
+- [x] Grid-based layout with proper weight configuration
+- [x] Responsive window design (minsize: 600x400)
+
+Dependencies Installed:
+- tkinterdnd2 0.4.3 (was not installed, installed during verification)
+
+Verification:
+- Import test passed: Successfully imported IcoConverterGUI, main, DEFAULT_SIZES
+- GUI initialization test passed: Created root window, initialized app, verified widgets created
+- Drag-and-drop configured successfully
+- Commit: ef32315 - "auto-claude: subtask-2-1 - Create gui_wrapper.py with basic window setup and "
+- Implementation plan updated: subtask-2-1 status set to "completed"
+
+GUI Features Implemented:
+- Window title: "PNG to ICO Converter"
+- Window size: 800x600 (minimum 600x400)
+- Drag-and-drop support for file drops
+- File list with scrollbar
+- File management buttons (Add, Clear, Remove)
+- Output directory selection with browse dialog
+- Icon size selection checkboxes (all DEFAULT_SIZES)
+- Status bar for user feedback
+- Placeholder convert button (to be implemented in subtask-3-1)
+
+Next Steps:
+- Proceed to subtask-2-2: Implement drag-and-drop event handlers for file drop
+- Then subtask-2-3: Create file list UI component to display dropped files (already done as part of this subtask)
+- Then Phase 3: Conversion Integration
+
+=== END SESSION 4 ===
+
+=== SESSION 5: SUBTASK-2-2 COMPLETION ===
+
+Date: 2026-01-01T01:20:00Z
+
+Subtask: subtask-2-2 - Implement drag-and-drop event handlers for file drop
+Status: COMPLETED
+
+Changes Made:
+- Enhanced _parse_drop_paths() method to handle multiple file path formats:
+  * Windows format with individual braces: {path1} {path2}
+  * Windows format with outer braces: {path1 path2}
+  * Unix format: space-separated paths
+  * Quoted paths with spaces
+- Implemented comprehensive drag-and-drop event handlers:
+  * _on_drop(): Handles file drop events, validates PNG files, prevents duplicates
+  * _on_drag_enter(): Updates status when files are dragged over window
+  * _on_drag_leave(): Resets status when files leave window
+- Added robust path parsing using regex and shlex for cross-platform compatibility
+- Implemented file validation:
+  * Checks if file exists
+  * Validates file extension is .png
+  * Prevents duplicate files from being added
+- Added status updates for user feedback during drag-and-drop operations
+- Enhanced error handling for drop event processing
+
+Code Quality:
+- [x] Follows patterns from ico_converter.py
+- [x] Uses type hints consistently
+- [x] Proper docstrings for all methods
+- [x] No debug print statements
+- [x] Error handling in place (try/except in _on_drop)
+- [x] Clean, readable code structure
+- [x] Cross-platform path handling (Windows and Unix formats)
+- [x] Proper file validation and duplicate prevention
+
+Testing Performed:
+- Created comprehensive test suite to verify drag-and-drop functionality:
+  * Test 1: Single PNG file drop - PASSED
+  * Test 2: Multiple PNG files drop - PASSED
+  * Test 3: Windows format with braces - PASSED
+  * Test 4: Non-PNG files filtered out - PASSED
+  * Test 5: Mixed files (PNG and non-PNG) - PASSED
+  * Test 6: Duplicate files prevention - PASSED
+  * Test 7: Drag enter/leave events - PASSED
+  * Test 8: File list display updates - PASSED
+- Path parsing tests verified all formats work correctly
+- Syntax validation passed
+
+Verification:
+- All drag-and-drop event handlers implemented and tested
+- File path parsing handles Windows and Unix formats correctly
+- File validation works (PNG only, no duplicates)
+- Status updates provide user feedback
+- GUI remains responsive during drag operations
+- Commit: 73be829 - "auto-claude: subtask-2-2 - Implement drag-and-drop event handlers for file drop"
+- Implementation plan updated: subtask-2-2 status set to "completed"
+
+Drag-and-Drop Features Implemented:
+- Single file drop support
+- Multiple file drop support
+- Windows format support (with braces)
+- Unix format support (space-separated)
+- File validation (PNG files only)
+- Duplicate file prevention
+- Status updates during drag operations
+- Visual feedback in file list
+- Error handling for invalid files
+
+Next Steps:
+- Proceed to subtask-2-3: Create file list UI component to display dropped files (already implemented as part of subtask-2-1)
+- Then Phase 3: Conversion Integration
+
+=== END SESSION 5 ===
