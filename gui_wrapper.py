@@ -8,6 +8,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 from pathlib import Path
 from typing import List, Optional
+import threading
 
 try:
     from tkinterdnd2 import TkinterDnD, DND_FILES
@@ -49,6 +50,10 @@ class IcoConverterGUI:
         self.dropped_files: List[Path] = []
         self.output_dir: Optional[Path] = None
         self.selected_sizes: List[tuple] = DEFAULT_SIZES.copy()
+        
+        # Threading state
+        self.conversion_thread: Optional[threading.Thread] = None
+        self.is_converting: bool = False
     
     def _setup_drag_drop(self) -> None:
         """Configure drag-and-drop functionality for the main window."""
@@ -393,16 +398,37 @@ class IcoConverterGUI:
                 break
     
     def _convert_files(self) -> None:
-        """Start the conversion process for all files in the list."""
+        """Start the conversion process for all files in the list in a separate thread."""
         if not self.dropped_files:
             self._update_status("No files to convert")
             return
         
+        if self.is_converting:
+            self._update_status("Conversion already in progress...")
+            return
+        
+        # Reset file statuses
+        for item_id in self.file_list.get_children():
+            values = self.file_list.item(item_id)['values']
+            if values:
+                self.file_list.item(item_id, values=(values[0], values[1], 'Pending'))
+        
+        # Update UI to show converting state
+        self._set_converting_state(True)
+        
+        # Start conversion in a separate thread
+        self.is_converting = True
+        self.conversion_thread = threading.Thread(target=self._run_conversion, daemon=True)
+        self.conversion_thread.start()
+    
+    def _run_conversion(self) -> None:
+        """Run the conversion process in a background thread."""
         total_files = len(self.dropped_files)
         success_count = 0
         error_count = 0
         
-        self._update_status(f"Converting {total_files} file(s)...")
+        # Update status using thread-safe method
+        self._thread_safe_update_status(f"Converting {total_files} file(s)...")
         
         for i, input_path in enumerate(self.dropped_files, 1):
             try:
@@ -413,32 +439,98 @@ class IcoConverterGUI:
                     output_path = input_path.parent / f"{input_path.stem}.ico"
                 
                 # Update status to show current file
-                self._update_status(f"Converting [{i}/{total_files}]: {input_path.name}")
+                self._thread_safe_update_status(f"Converting [{i}/{total_files}]: {input_path.name}")
                 
                 # Convert the file
                 if convert_png_to_ico(input_path, output_path, self.selected_sizes, verbose=False):
-                    self._update_file_status(input_path, "Success")
+                    self._thread_safe_update_file_status(input_path, "Success")
                     success_count += 1
                 else:
-                    self._update_file_status(input_path, "Failed")
+                    self._thread_safe_update_file_status(input_path, "Failed")
                     error_count += 1
                 
                 # Update progress bar
                 progress = (i / total_files) * 100
-                self.progress_var.set(progress)
-                
-                # Update UI to refresh
-                self.root.update_idletasks()
+                self._thread_safe_update_progress(progress)
                 
             except Exception as e:
-                self._update_file_status(input_path, "Error")
+                self._thread_safe_update_file_status(input_path, "Error")
                 error_count += 1
         
-        # Show summary
+        # Show summary and reset converting state
+        self.is_converting = False
+        self._thread_safe_set_converting_state(False)
+        
         if error_count == 0:
-            self._update_status(f"Conversion complete! Successfully converted {success_count} file(s)")
+            self._thread_safe_update_status(f"Conversion complete! Successfully converted {success_count} file(s)")
         else:
-            self._update_status(f"Conversion complete! Success: {success_count}, Errors: {error_count}")
+            self._thread_safe_update_status(f"Conversion complete! Success: {success_count}, Errors: {error_count}")
+    
+    def _set_converting_state(self, converting: bool) -> None:
+        """
+        Update UI elements based on conversion state.
+        Disables buttons during conversion to prevent concurrent operations.
+        
+        Args:
+            converting: Whether conversion is in progress
+        """
+        # Find the button frame and update its children
+        for widget in self.root.winfo_children():
+            if isinstance(widget, ttk.Frame):
+                for child in widget.winfo_children():
+                    if isinstance(child, ttk.Frame) and any(
+                        isinstance(btn, ttk.Button) for btn in child.winfo_children()
+                    ):
+                        # This is the button frame
+                        for btn in child.winfo_children():
+                            if isinstance(btn, ttk.Button):
+                                btn_text = btn.cget('text')
+                                if btn_text == 'Convert':
+                                    if converting:
+                                        btn.configure(text='Converting...', state=tk.DISABLED)
+                                    else:
+                                        btn.configure(text='Convert', state=tk.NORMAL)
+                                elif converting:
+                                    btn.configure(state=tk.DISABLED)
+                                else:
+                                    btn.configure(state=tk.NORMAL)
+    
+    def _thread_safe_set_converting_state(self, converting: bool) -> None:
+        """
+        Thread-safe method to update the converting state.
+        
+        Args:
+            converting: Whether conversion is in progress
+        """
+        self.root.after(0, lambda: self._set_converting_state(converting))
+    
+    def _thread_safe_update_status(self, message: str) -> None:
+        """
+        Update the status label in a thread-safe manner.
+        
+        Args:
+            message: Status message to display
+        """
+        self.root.after(0, lambda: self._update_status(message))
+    
+    def _thread_safe_update_file_status(self, file_path: Path, status: str) -> None:
+        """
+        Update the status of a specific file in a thread-safe manner.
+        
+        Args:
+            file_path: Path to the file to update
+            status: New status string
+        """
+        self.root.after(0, lambda: self._update_file_status(file_path, status))
+    
+    def _thread_safe_update_progress(self, value: float) -> None:
+        """
+        Update the progress bar in a thread-safe manner.
+        
+        Args:
+            value: Progress value (0-100)
+        """
+        self.root.after(0, lambda: self.progress_var.set(value))
     
     def _update_status(self, message: str) -> None:
         """
