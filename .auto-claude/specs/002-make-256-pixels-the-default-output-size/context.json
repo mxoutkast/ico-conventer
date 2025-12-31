@@ -1,0 +1,17 @@
+{
+  "task_description": "make 256 pixels the default output size",
+  "scoped_services": ["main"],
+  "files_to_modify": ["ico_converter.py"],
+  "patterns": {
+    "default_sizes_location": "argparse --sizes argument on line 168",
+    "default_sizes_constant": "DEFAULT_SIZES constant on line 12"
+  },
+  "service_contexts": {
+    "main": {
+      "purpose": "ICO conversion utility",
+      "primary_file": "ico_converter.py",
+      "change_type": "configuration_update"
+    }
+  },
+  "created_at": "2025-01-01T00:50:00Z"
+}

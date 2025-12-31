@@ -168,8 +168,8 @@ Examples:
         '--sizes',
         nargs='+',
         type=int,
-        default=[16, 32, 48, 64, 128, 256],
-        help='Icon sizes to include (default: 16 32 48 64 128 256)'
+        default=[256],
+        help='Icon sizes to include (default: 256)'
     )
     
     parser.add_argument(

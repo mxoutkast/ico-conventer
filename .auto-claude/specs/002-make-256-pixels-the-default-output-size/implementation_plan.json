@@ -1,0 +1,48 @@
+{
+  "feature": "Make 256 Pixels the Default Output Size",
+  "spec_name": "002-make-256-pixels-the-default-output-size",
+  "workflow_type": "simple",
+  "total_phases": 1,
+  "recommended_workers": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Update Default Size",
+      "description": "Change the default icon size from multiple sizes to 256 pixels only",
+      "depends_on": [],
+      "subtasks": [
+        {
+          "id": "subtask-1-1",
+          "description": "Update the --sizes argument default from [16, 32, 48, 64, 128, 256] to [256]",
+          "service": "main",
+          "status": "pending",
+          "files_to_create": [],
+          "files_to_modify": ["ico_converter.py"],
+          "patterns_from": [],
+          "verification": {
+            "type": "manual",
+            "run": "python ico_converter.py --help to verify default: 256, and python ico_converter.py test.png --dry-run to verify it shows Icon sizes: 256x256"
+          }
+        },
+        {
+          "id": "subtask-1-2",
+          "description": "Update DEFAULT_SIZES constant from [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)] to [(256, 256)] for consistency",
+          "service": "main",
+          "status": "pending",
+          "files_to_create": [],
+          "files_to_modify": ["ico_converter.py"],
+          "patterns_from": [],
+          "verification": {
+            "type": "manual",
+            "run": "Verify the constant is updated and code still runs without errors"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "created_at": "2025-01-01T00:50:00Z",
+    "complexity": "simple",
+    "estimated_sessions": 1
+  }
+}

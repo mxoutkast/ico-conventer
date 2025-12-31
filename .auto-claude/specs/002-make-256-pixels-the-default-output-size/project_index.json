@@ -1,0 +1,19 @@
+{
+  "project_root": "D:\\ico-conventer",
+  "project_type": "single",
+  "services": {
+    "main": {
+      "name": "main",
+      "path": "D:\\ico-conventer",
+      "language": "Python",
+      "framework": null,
+      "type": "unknown",
+      "package_manager": "pip",
+      "dependencies": [
+        "Pillow"
+      ]
+    }
+  },
+  "infrastructure": {},
+  "conventions": {}
+}
