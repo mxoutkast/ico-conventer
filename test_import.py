@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Test script to verify convert_png_to_ico import"""
+"""Test import of gui_wrapper module."""
 
 try:
-    from gui_wrapper import convert_png_to_ico
-    print("Import OK")
+    from gui_wrapper import IcoConverterGUI, threading
+    print("Import successful")
 except Exception as e:
     print(f"Import failed: {e}")
-    import traceback
-    traceback.print_exc()
+    exit(1)
