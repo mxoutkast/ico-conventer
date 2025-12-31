@@ -17,7 +17,9 @@
           "service": "main",
           "status": "completed",
           "files_to_create": [],
-          "files_to_modify": ["ico_converter.py"],
+          "files_to_modify": [
+            "ico_converter.py"
+          ],
           "patterns_from": [],
           "verification": {
             "type": "manual",
@@ -28,9 +30,11 @@
           "id": "subtask-1-2",
           "description": "Update DEFAULT_SIZES constant from [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)] to [(256, 256)] for consistency",
           "service": "main",
-          "status": "pending",
+          "status": "completed",
           "files_to_create": [],
-          "files_to_modify": ["ico_converter.py"],
+          "files_to_modify": [
+            "ico_converter.py"
+          ],
           "patterns_from": [],
           "verification": {
             "type": "manual",
@@ -44,5 +48,9 @@
     "created_at": "2025-01-01T00:50:00Z",
     "complexity": "simple",
     "estimated_sessions": 1
-  }
+  },
+  "status": "in_progress",
+  "planStatus": "in_progress",
+  "updated_at": "2025-12-31T16:57:40.807Z",
+  "recoveryNote": "Task recovered from stuck state at 2025-12-31T16:57:40.807Z"
 }
