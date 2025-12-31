@@ -218,7 +218,7 @@
             "type": "manual",
             "instructions": "Drag a non-PNG file (e.g., .txt), verify warning message appears and file is not added"
           },
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "subtask-5-2",

@@ -157,3 +157,58 @@ Git Commit:
 Status: COMPLETED ✓
 
 === END SESSION 3 ===
+
+=== SESSION 4: Subtask 5-1 Implementation ===
+
+Date: 2026-01-01T01:00:00Z
+Subtask: subtask-5-1
+Description: Add validation for non-PNG files dropped on GUI
+
+Implementation Details:
+- Enhanced _on_drop() method to provide individual warning messages for non-PNG files
+- Added tracking of invalid file names to display specific warnings
+- Follows pattern from ico_converter.py: "Warning: Skipping non-PNG file: {filename}"
+- Maintains summary counts for added, skipped, and invalid files
+- Shows individual warnings for each non-PNG file dropped
+- Provides clear user feedback when only non-PNG files are dropped
+
+Key Changes:
+- Added invalid_files list to track non-PNG file names
+- Added individual warning messages after summary message when invalid files are detected
+- Enhanced status messages to show warnings for each invalid file
+- Maintains backward compatibility with existing functionality
+
+Features Implemented:
+- ✓ PNG files are accepted and added to the list
+- ✓ Non-PNG files are rejected with warning messages
+- ✓ Individual warnings shown for each non-PNG file
+- ✓ Summary counts include invalid file count
+- ✓ Mixed files handled correctly (only PNG added, warnings for others)
+- ✓ All non-PNG files case handled with multiple warnings
+
+Verification Performed:
+- Syntax validation: Passed (python -m py_compile gui_wrapper.py)
+- Import test: Passed (from gui_wrapper import IcoConverterGUI)
+- Automated verification tests:
+  * PNG file acceptance: ✓ Works correctly
+  * Non-PNG file rejection: ✓ Works correctly
+  * Mixed file handling: ✓ Only PNG added, warnings for others
+  * Warning message format: ✓ Matches pattern from ico_converter.py
+  * Individual warnings: ✓ Each non-PNG file gets its own warning
+  * Multiple non-PNG files: ✓ All get individual warnings
+  * All non-PNG case: ✓ Shows summary and individual warnings
+
+Quality Checklist:
+- [x] Follows patterns from reference files (ico_converter.py)
+- [x] No console.log/print debugging statements
+- [x] Error handling in place
+- [x] Verification passes
+- [x] Clean commit with descriptive message
+
+Git Commit:
+- Commit hash: 90f8e58
+- Message: "auto-claude: subtask-5-1 - Add validation for non-PNG files dropped on GUI"
+
+Status: COMPLETED ✓
+
+=== END SESSION 4 ===
