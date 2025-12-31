@@ -1,25 +1,25 @@
 {
   "active": true,
   "spec": "001-create-the-gui-wrapper-with-drag-and-drop-feature",
-  "state": "building",
+  "state": "error",
   "subtasks": {
-    "completed": 0,
+    "completed": 3,
     "total": 13,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Dependencies Setup",
+    "current": "GUI Core Implementation",
     "id": null,
-    "total": 1
+    "total": 3
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 2,
+    "number": 6,
     "started_at": "2026-01-01T00:57:04.178967"
   },
-  "last_update": "2026-01-01T00:58:00.592262"
+  "last_update": "2026-01-01T01:09:13.027827"
 }

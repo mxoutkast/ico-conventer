@@ -85,7 +85,7 @@
             "type": "manual",
             "instructions": "Drop multiple PNG files, verify all appear in the list with filenames"
           },
-          "status": "pending"
+          "status": "completed"
         }
       ]
     },
