@@ -55,6 +55,9 @@ class IcoConverterGUI:
             256: tk.IntVar(value=1)
         }
         
+        # Output directory display variable
+        self.output_dir_var = tk.StringVar(value="Same as input files")
+        
         # Threading state
         self.conversion_thread: Optional[threading.Thread] = None
         self.is_converting: bool = False
@@ -122,13 +125,47 @@ class IcoConverterGUI:
             )
             checkbox.grid(row=0, column=i, padx=5)
         
+        # Output directory frame
+        output_frame = ttk.LabelFrame(
+            main_frame,
+            text="Output Directory",
+            padding="10"
+        )
+        output_frame.grid(row=3, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
+        output_frame.columnconfigure(0, weight=1)
+        
+        # Output directory path display
+        output_path_label = ttk.Label(
+            output_frame,
+            textvariable=self.output_dir_var,
+            relief=tk.SUNKEN,
+            anchor=tk.W
+        )
+        output_path_label.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 5))
+        
+        # Browse button
+        browse_button = ttk.Button(
+            output_frame,
+            text="Browse...",
+            command=self._browse_output_directory
+        )
+        browse_button.grid(row=0, column=1, sticky=tk.E)
+        
+        # Clear output directory button
+        clear_output_button = ttk.Button(
+            output_frame,
+            text="Clear",
+            command=self._clear_output_directory
+        )
+        clear_output_button.grid(row=0, column=2, sticky=tk.E, padx=(5, 0))
+        
         # Drop zone frame
         drop_zone = ttk.LabelFrame(
             main_frame,
             text="Drop Zone",
             padding="10"
         )
-        drop_zone.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
+        drop_zone.grid(row=4, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
         drop_zone.columnconfigure(0, weight=1)
         drop_zone.rowconfigure(0, weight=1)
         
@@ -169,7 +206,7 @@ class IcoConverterGUI:
         
         # Control buttons frame
         button_frame = ttk.Frame(main_frame)
-        button_frame.grid(row=4, column=0, pady=(0, 10), sticky=tk.W)
+        button_frame.grid(row=5, column=0, pady=(0, 10), sticky=tk.W)
         
         # Clear button
         clear_button = ttk.Button(
@@ -202,7 +239,7 @@ class IcoConverterGUI:
             variable=self.progress_var,
             maximum=100
         )
-        progress_bar.grid(row=5, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
+        progress_bar.grid(row=6, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
         
         # Status label
         self.status_label = ttk.Label(
@@ -211,7 +248,35 @@ class IcoConverterGUI:
             relief=tk.SUNKEN,
             anchor=tk.W
         )
-        self.status_label.grid(row=6, column=0, sticky=(tk.W, tk.E))
+        self.status_label.grid(row=7, column=0, sticky=(tk.W, tk.E))
+    
+    def _browse_output_directory(self) -> None:
+        """Open directory browser dialog to select output directory."""
+        try:
+            # Open directory selection dialog
+            directory = filedialog.askdirectory(
+                title="Select Output Directory",
+                initialdir=str(self.output_dir) if self.output_dir else None
+            )
+            
+            if directory:
+                self.output_dir = Path(directory)
+                # Update display to show relative path if possible, otherwise absolute
+                try:
+                    rel_path = self.output_dir.relative_to(Path.cwd())
+                    display_path = f"./{rel_path}"
+                except ValueError:
+                    display_path = str(self.output_dir)
+                self.output_dir_var.set(display_path)
+                self._update_status(f"Output directory set to: {display_path}")
+        except Exception as e:
+            self._update_status(f"Error selecting directory: {e}")
+    
+    def _clear_output_directory(self) -> None:
+        """Clear the selected output directory (revert to default)."""
+        self.output_dir = None
+        self.output_dir_var.set("Same as input files")
+        self._update_status("Output directory cleared (will save with input files)")
     
     def _setup_drop_zone_drag_drop(self, widget: tk.Widget) -> None:
         """
