@@ -25,7 +25,7 @@
             "command": "cat requirements.txt | grep tkinterdnd2",
             "expected": "tkinterdnd2"
           },
-          "status": "pending"
+          "status": "completed"
         }
       ]
     },
