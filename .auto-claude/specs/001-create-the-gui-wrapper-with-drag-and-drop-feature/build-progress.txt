@@ -267,7 +267,7 @@ Quality Checklist:
 - [x] Clean commit with descriptive message
 
 Git Commit:
-- Commit hash: TBD (to be committed)
+- Commit hash: 861a1a1
 - Message: "auto-claude: subtask-5-2 - Add error display for failed conversions with detailed messages"
 
 Status: COMPLETED ✓
