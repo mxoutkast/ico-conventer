@@ -11,7 +11,7 @@ from PIL import Image
 
 
 # Standard icon sizes for Windows ICO files
-DEFAULT_SIZES = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+DEFAULT_SIZES = [(256, 256)]
 
 
 def collect_files(inputs: List[str], recursive: bool = False) -> List[Path]:
