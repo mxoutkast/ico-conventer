@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """
 PNG to ICO Converter - CLI tool for batch converting PNG images to ICO format with multiple sizes
+Also supports conversion to other formats (JPEG, WEBP, PNG).
 """
 
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from PIL import Image
 
 
 # Standard icon sizes for Windows ICO files
 DEFAULT_SIZES = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+SUPPORTED_FORMATS = ['ICO', 'PNG', 'JPEG', 'WEBP']
 
 
 def collect_files(inputs: List[str], recursive: bool = False) -> List[Path]:
@@ -60,19 +62,21 @@ def collect_files(inputs: List[str], recursive: bool = False) -> List[Path]:
     return sorted(list(set(files)))
 
 
-def convert_png_to_ico(
+def convert_image(
     input_path: Path,
     output_path: Path,
-    sizes: List[Tuple[int, int]],
+    format: str = 'ICO',
+    sizes: Optional[List[Tuple[int, int]]] = None,
     verbose: bool = False
 ) -> bool:
     """
-    Convert a PNG image to ICO format with multiple sizes.
+    Convert a PNG image to the specified format.
     
     Args:
         input_path: Path to input PNG file
-        output_path: Path to output ICO file
-        sizes: List of (width, height) tuples for icon sizes
+        output_path: Path to output file
+        format: Output format ('ICO', 'PNG', 'JPEG', 'WEBP')
+        sizes: List of (width, height) tuples (only used for ICO)
         verbose: If True, print detailed information
     
     Returns:
@@ -87,24 +91,55 @@ def convert_png_to_ico(
                 print(f"  Original size: {original_size[0]}x{original_size[1]}")
                 print(f"  Mode: {img.mode}")
             
-            # Convert to RGBA if needed (ICO supports transparency)
-            if img.mode != 'RGBA':
+            format = format.upper()
+            if format not in SUPPORTED_FORMATS:
+                print(f"Error: Unsupported format: {format}")
+                return False
+
+            # Format specific handling
+            if format == 'ICO':
+                # Convert to RGBA if needed (ICO supports transparency)
+                if img.mode != 'RGBA':
+                    if verbose:
+                        print(f"  Converting from {img.mode} to RGBA")
+                    img = img.convert('RGBA')
+
+                # Use default sizes if none provided
+                target_sizes = sizes if sizes else DEFAULT_SIZES
+
+                # Validate minimum size
+                max_size = max(s[0] for s in target_sizes)
+                if original_size[0] < max_size or original_size[1] < max_size:
+                    print(f"Warning: {input_path.name} ({original_size[0]}x{original_size[1]}) "
+                          f"is smaller than largest icon size ({max_size}x{max_size})")
+
                 if verbose:
-                    print(f"  Converting from {img.mode} to RGBA")
-                img = img.convert('RGBA')
-            
-            # Validate minimum size
-            max_size = max(s[0] for s in sizes)
-            if original_size[0] < max_size or original_size[1] < max_size:
-                print(f"Warning: {input_path.name} ({original_size[0]}x{original_size[1]}) "
-                      f"is smaller than largest icon size ({max_size}x{max_size})")
-            
-            # Save as ICO with multiple sizes
-            if verbose:
-                size_list = ', '.join(f"{w}x{h}" for w, h in sizes)
-                print(f"  Generating sizes: {size_list}")
-            
-            img.save(output_path, format='ICO', sizes=sizes)
+                    size_list = ', '.join(f"{w}x{h}" for w, h in target_sizes)
+                    print(f"  Generating sizes: {size_list}")
+
+                img.save(output_path, format='ICO', sizes=target_sizes)
+
+            elif format == 'JPEG':
+                # JPEG does not support transparency
+                if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                    if verbose:
+                        print(f"  Converting from {img.mode} to RGB (handling transparency)")
+                    # Create white background for transparency
+                    background = Image.new('RGB', img.size, (255, 255, 255))
+                    # Handle P mode transparency
+                    if img.mode == 'P':
+                        img = img.convert('RGBA')
+                    background.paste(img, mask=img.split()[3] if len(img.split()) > 3 else None)
+                    img = background
+                elif img.mode != 'RGB':
+                    img = img.convert('RGB')
+
+                img.save(output_path, format='JPEG', quality=90)
+
+            else: # PNG, WEBP
+                # These formats support transparency, just ensure compatible mode if needed
+                # WEBP supports RGBA. PNG supports RGBA.
+                img.save(output_path, format=format)
             
             if verbose:
                 output_size = output_path.stat().st_size
@@ -118,6 +153,18 @@ def convert_png_to_ico(
     except Exception as e:
         print(f"Error converting {input_path.name}: {e}")
         return False
+
+
+def convert_png_to_ico(
+    input_path: Path,
+    output_path: Path,
+    sizes: List[Tuple[int, int]],
+    verbose: bool = False
+) -> bool:
+    """
+    Wrapper for backward compatibility.
+    """
+    return convert_image(input_path, output_path, format='ICO', sizes=sizes, verbose=verbose)
 
 
 def parse_sizes(size_args: List[int]) -> List[Tuple[int, int]]:
@@ -137,18 +184,14 @@ def parse_sizes(size_args: List[int]) -> List[Tuple[int, int]]:
 def main():
     """Main entry point for the CLI tool."""
     parser = argparse.ArgumentParser(
-        description='Convert PNG images to ICO format with multiple embedded sizes',
+        description='Convert PNG images to ICO or other formats',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   %(prog)s image.png                    # Convert single file (output: image.ico in same dir)
   %(prog)s *.png                        # Convert all PNGs in current directory
-  %(prog)s images/                      # Convert all PNGs in a directory
-  %(prog)s images/ -r                   # Convert recursively
-  %(prog)s image.png -o icons/          # Save to different directory
-  %(prog)s *.png -o ./output/           # Batch convert to output folder
-  %(prog)s image.png --sizes 16 32 48   # Custom icon sizes
-  %(prog)s *.png --dry-run              # Preview without converting
+  %(prog)s image.png --format JPEG      # Convert to JPEG
+  %(prog)s image.png --sizes 16 32 48   # Custom icon sizes (ICO only)
         """
     )
     
@@ -161,7 +204,15 @@ Examples:
     parser.add_argument(
         '-o', '--output-dir',
         type=str,
-        help='Output directory. If not specified, ICO files are saved in the same directory as their source PNG files'
+        help='Output directory. If not specified, output files are saved in the same directory as their source PNG files'
+    )
+
+    parser.add_argument(
+        '-f', '--format',
+        type=str,
+        default='ICO',
+        choices=SUPPORTED_FORMATS,
+        help='Output format (default: ICO)'
     )
     
     parser.add_argument(
@@ -169,7 +220,7 @@ Examples:
         nargs='+',
         type=int,
         default=[16, 32, 48, 64, 128, 256],
-        help='Icon sizes to include (default: 16 32 48 64 128 256)'
+        help='Icon sizes to include (ICO only, default: 16 32 48 64 128 256)'
     )
     
     parser.add_argument(
@@ -181,7 +232,7 @@ Examples:
     parser.add_argument(
         '--overwrite',
         action='store_true',
-        help='Overwrite existing ICO files without prompting'
+        help='Overwrite existing files without prompting'
     )
     
     parser.add_argument(
@@ -217,9 +268,13 @@ Examples:
     
     # Parse sizes
     sizes = parse_sizes(args.sizes)
+    format = args.format.upper()
+
     if args.verbose or args.dry_run:
-        size_list = ', '.join(f"{w}x{h}" for w, h in sizes)
-        print(f"Icon sizes: {size_list}")
+        print(f"Output format: {format}")
+        if format == 'ICO':
+            size_list = ', '.join(f"{w}x{h}" for w, h in sizes)
+            print(f"Icon sizes: {size_list}")
     
     # Setup output directory
     output_dir = Path(args.output_dir) if args.output_dir else None
@@ -234,12 +289,21 @@ Examples:
     skip_count = 0
     error_count = 0
     
+    # Extension mapping
+    extensions = {
+        'ICO': '.ico',
+        'PNG': '.png',
+        'JPEG': '.jpg',
+        'WEBP': '.webp'
+    }
+    ext = extensions.get(format, '.ico')
+
     for i, png_file in enumerate(png_files, 1):
         # Determine output path
         if output_dir:
-            output_path = output_dir / f"{png_file.stem}{args.suffix}.ico"
+            output_path = output_dir / f"{png_file.stem}{args.suffix}{ext}"
         else:
-            output_path = png_file.parent / f"{png_file.stem}{args.suffix}.ico"
+            output_path = png_file.parent / f"{png_file.stem}{args.suffix}{ext}"
         
         # Check if output already exists
         if output_path.exists() and not args.overwrite and not args.dry_run:
@@ -254,7 +318,7 @@ Examples:
             continue
         
         # Convert
-        if convert_png_to_ico(png_file, output_path, sizes, args.verbose):
+        if convert_image(png_file, output_path, format=format, sizes=sizes, verbose=args.verbose):
             success_count += 1
         else:
             error_count += 1

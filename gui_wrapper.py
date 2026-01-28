@@ -7,8 +7,9 @@ import sys
 import tkinter as tk
 from tkinter import ttk, filedialog
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import threading
+from PIL import Image, ImageTk
 
 try:
     from tkinterdnd2 import TkinterDnD, DND_FILES
@@ -18,11 +19,7 @@ except ImportError:
     sys.exit(1)
 
 # Import conversion function from ico_converter
-from ico_converter import convert_png_to_ico
-
-
-# Standard icon sizes for Windows ICO files (from ico_converter.py)
-DEFAULT_SIZES = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+from ico_converter import convert_image, DEFAULT_SIZES, SUPPORTED_FORMATS
 
 
 class IcoConverterGUI:
@@ -37,13 +34,15 @@ class IcoConverterGUI:
         """
         self.root = root
         self.root.title("PNG to ICO Converter")
-        self.root.geometry("800x600")
-        self.root.minsize(600, 400)
+        self.root.geometry("900x650")  # Increased width for preview
+        self.root.minsize(700, 450)
         
         # State variables
         self.dropped_files: List[Path] = []
         self.output_dir: Optional[Path] = None
-        self.selected_sizes: List[tuple] = DEFAULT_SIZES.copy()
+        self.selected_sizes: List[Tuple[int, int]] = DEFAULT_SIZES.copy()
+        self.selected_format = tk.StringVar(value='ICO')
+        self.current_preview_image = None  # Keep reference to avoid GC
         
         # Size checkbox variables
         self.size_vars = {
@@ -101,29 +100,52 @@ class IcoConverterGUI:
         # Instructions label
         instructions = ttk.Label(
             main_frame,
-            text="Drag and drop PNG files here to convert them to ICO format",
+            text="Drag and drop PNG files here to convert them",
             font=('Helvetica', 10)
         )
         instructions.grid(row=1, column=0, pady=(0, 10), sticky=tk.W)
         
-        # Configuration frame for size selection
-        config_frame = ttk.LabelFrame(
+        # Configuration frame for settings
+        settings_frame = ttk.LabelFrame(
             main_frame,
-            text="Icon Sizes",
+            text="Conversion Settings",
             padding="10"
         )
-        config_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
+        settings_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
+
+        # Output Format Selection
+        format_frame = ttk.Frame(settings_frame)
+        format_frame.pack(fill=tk.X, pady=(0, 5))
+
+        ttk.Label(format_frame, text="Output Format:").pack(side=tk.LEFT)
+        format_combo = ttk.Combobox(
+            format_frame,
+            textvariable=self.selected_format,
+            values=SUPPORTED_FORMATS,
+            state="readonly",
+            width=10
+        )
+        format_combo.pack(side=tk.LEFT, padx=5)
+        format_combo.bind('<<ComboboxSelected>>', self._on_format_changed)
+
+        # Icon Sizes Frame (inside settings)
+        self.size_frame = ttk.Frame(settings_frame)
+        self.size_frame.pack(fill=tk.X, pady=(5, 0))
+
+        ttk.Label(self.size_frame, text="Icon Sizes:").pack(side=tk.LEFT, padx=(0, 5))
         
         # Size checkboxes
         sizes = [16, 32, 48, 64, 128, 256]
+        self.size_checkboxes = []
         for i, size in enumerate(sizes):
             checkbox = ttk.Checkbutton(
-                config_frame,
+                self.size_frame,
                 text=f"{size}x{size}",
                 variable=self.size_vars[size],
                 command=self._update_selected_sizes
             )
-            checkbox.grid(row=0, column=i, padx=5)
+            checkbox.pack(side=tk.LEFT, padx=5)
+            self.size_checkboxes.append(checkbox)
         
         # Output directory frame
         output_frame = ttk.LabelFrame(
@@ -159,14 +181,15 @@ class IcoConverterGUI:
         )
         clear_output_button.grid(row=0, column=2, sticky=tk.E, padx=(5, 0))
         
-        # Drop zone frame
+        # Drop zone frame (File List + Preview)
         drop_zone = ttk.LabelFrame(
             main_frame,
-            text="Drop Zone",
+            text="Files & Preview",
             padding="10"
         )
         drop_zone.grid(row=4, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
-        drop_zone.columnconfigure(0, weight=1)
+        drop_zone.columnconfigure(0, weight=3) # List gets more space
+        drop_zone.columnconfigure(2, weight=1) # Preview gets less space
         drop_zone.rowconfigure(0, weight=1)
         
         # File list (Treeview)
@@ -180,12 +203,15 @@ class IcoConverterGUI:
         self.file_list.heading('size', text='Size')
         self.file_list.heading('status', text='Status')
         self.file_list.heading('error', text='Error Details')
-        self.file_list.column('filename', width=250, minwidth=150)
-        self.file_list.column('size', width=80, minwidth=60)
-        self.file_list.column('status', width=100, minwidth=80)
-        self.file_list.column('error', width=300, minwidth=200)
+        self.file_list.column('filename', width=200, minwidth=150)
+        self.file_list.column('size', width=60, minwidth=50)
+        self.file_list.column('status', width=80, minwidth=60)
+        self.file_list.column('error', width=150, minwidth=100)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Bind selection change for preview
+        self.file_list.bind('<<TreeviewSelect>>', self._on_selection_change)
+
         # Configure tags for different statuses with colors
         self.file_list.tag_configure('success', foreground='green')
         self.file_list.tag_configure('error', foreground='red')
@@ -202,13 +228,21 @@ class IcoConverterGUI:
         scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
         self.file_list.configure(yscrollcommand=scrollbar.set)
         
+        # Preview Frame
+        preview_frame = ttk.LabelFrame(drop_zone, text="Preview", padding="5")
+        preview_frame.grid(row=0, column=2, sticky=(tk.N, tk.S, tk.E, tk.W), padx=(10, 0))
+
+        # Preview Label (image holder)
+        self.preview_label = ttk.Label(preview_frame, text="No Selection", anchor=tk.CENTER)
+        self.preview_label.pack(fill=tk.BOTH, expand=True)
+
         # File counter label
         self.file_counter = ttk.Label(
             drop_zone,
             text="0 files",
             font=('Helvetica', 9)
         )
-        self.file_counter.grid(row=1, column=0, columnspan=2, sticky=tk.W, pady=(5, 0))
+        self.file_counter.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(5, 0))
         
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
@@ -302,6 +336,20 @@ class IcoConverterGUI:
         except Exception as e:
             print(f"Warning: Could not configure drag-and-drop for widget: {e}")
     
+    def _on_format_changed(self, event=None) -> None:
+        """Handle output format selection change."""
+        current_format = self.selected_format.get()
+        if current_format == 'ICO':
+            # Enable checkboxes
+            for cb in self.size_checkboxes:
+                cb.configure(state=tk.NORMAL)
+            self._update_status("Format set to ICO - Multiple sizes enabled")
+        else:
+            # Disable checkboxes
+            for cb in self.size_checkboxes:
+                cb.configure(state=tk.DISABLED)
+            self._update_status(f"Format set to {current_format} - Size options disabled")
+
     def _update_selected_sizes(self) -> None:
         """Update the selected_sizes list based on checkbox states."""
         self.selected_sizes = []
@@ -310,6 +358,61 @@ class IcoConverterGUI:
                 self.selected_sizes.append((size, size))
         self.selected_sizes.sort()
     
+    def _on_selection_change(self, event) -> None:
+        """Handle selection change in file list to show preview."""
+        selected_items = self.file_list.selection()
+        if not selected_items:
+            self.preview_label.configure(image='', text="No Selection")
+            self.current_preview_image = None
+            return
+
+        # Get the first selected item
+        item_id = selected_items[0]
+        values = self.file_list.item(item_id)['values']
+        if not values:
+            return
+
+        filename = values[0]
+
+        # Find the full path from dropped_files
+        file_path = None
+        for path in self.dropped_files:
+            if path.name == filename:
+                file_path = path
+                break
+
+        if file_path and file_path.exists():
+            self._show_preview(file_path)
+        else:
+            self.preview_label.configure(image='', text="File not found")
+            self.current_preview_image = None
+
+    def _show_preview(self, file_path: Path) -> None:
+        """
+        Display a preview of the selected image.
+
+        Args:
+            file_path: Path to the image file
+        """
+        try:
+            # Open the image
+            with Image.open(file_path) as img:
+                # Calculate resize dimensions
+                preview_size = (200, 200)
+                img.thumbnail(preview_size, Image.Resampling.LANCZOS)
+
+                # Convert to PhotoImage
+                photo = ImageTk.PhotoImage(img)
+
+                # Update label
+                self.preview_label.configure(image=photo, text="")
+                self.current_preview_image = photo  # Keep reference
+
+        except Exception as e:
+            print(f"Error previewing image: {e}")
+            self.preview_label.configure(image='', text="Preview Error")
+            self.current_preview_image = None
+
     def _on_drop(self, event: tk.Event) -> None:
         """
         Handle file drop event.
@@ -474,6 +577,8 @@ class IcoConverterGUI:
         self.dropped_files.clear()
         self.file_list.delete(*self.file_list.get_children())
         self.progress_var.set(0)
+        self.preview_label.configure(image='', text="No Selection")
+        self.current_preview_image = None
         self._update_file_counter()
         self._update_status("List cleared")
     
@@ -501,6 +606,14 @@ class IcoConverterGUI:
         for item_id in selected_items:
             self.file_list.delete(item_id)
         
+        # Clear preview if nothing selected
+        if not self.file_list.selection():
+            self.preview_label.configure(image='', text="No Selection")
+            self.current_preview_image = None
+        else:
+            # Trigger selection change to update preview to new selection if any
+            self._on_selection_change(None)
+
         self._update_file_counter()
         self._update_status(f"Removed {len(selected_items)} file(s)")
     
@@ -560,8 +673,19 @@ class IcoConverterGUI:
         success_count = 0
         error_count = 0
         
+        # Get settings
+        output_format = self.selected_format.get()
+        # Map format to extension
+        extensions = {
+            'ICO': '.ico',
+            'PNG': '.png',
+            'JPEG': '.jpg',
+            'WEBP': '.webp'
+        }
+        ext = extensions.get(output_format, '.ico')
+
         # Update status using thread-safe method
-        self._thread_safe_update_status(f"Converting {total_files} file(s)...")
+        self._thread_safe_update_status(f"Converting {total_files} file(s) to {output_format}...")
         
         for i, input_path in enumerate(self.dropped_files, 1):
             error_message = ''
@@ -571,15 +695,18 @@ class IcoConverterGUI:
                 
                 # Determine output path
                 if self.output_dir:
-                    output_path = self.output_dir / f"{input_path.stem}.ico"
+                    output_path = self.output_dir / f"{input_path.stem}{ext}"
                 else:
-                    output_path = input_path.parent / f"{input_path.stem}.ico"
+                    output_path = input_path.parent / f"{input_path.stem}{ext}"
                 
                 # Update status to show current file
                 self._thread_safe_update_status(f"Converting [{i}/{total_files}]: {input_path.name}")
                 
                 # Convert the file
-                if convert_png_to_ico(input_path, output_path, self.selected_sizes, verbose=False):
+                # If format is ICO, we use selected sizes. Otherwise sizes are ignored/None.
+                sizes_to_use = self.selected_sizes if output_format == 'ICO' else None
+
+                if convert_image(input_path, output_path, format=output_format, sizes=sizes_to_use, verbose=False):
                     self._thread_safe_update_file_status(input_path, "Success", '')
                     success_count += 1
                 else:
