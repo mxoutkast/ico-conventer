@@ -213,6 +213,11 @@ class IcoConverterGUI:
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
         
+        # Keyboard shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all)
+
         # Control buttons frame
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=5, column=0, pady=(0, 10), sticky=tk.W)
@@ -477,7 +482,14 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
+    def _select_all(self, event: Optional[tk.Event] = None) -> None:
+        """Select all files in the list."""
+        children = self.file_list.get_children()
+        if children:
+            self.file_list.selection_set(children)
+            self._update_status(f"Selected all {len(children)} files")
+
+    def _remove_selected_files(self, event: Optional[tk.Event] = None) -> None:
         """Remove selected files from the list."""
         selected_items = self.file_list.selection()
         if not selected_items:
