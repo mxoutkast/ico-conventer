@@ -186,6 +186,10 @@ class IcoConverterGUI:
         self.file_list.column('error', width=300, minwidth=200)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Add keyboard shortcuts for removing files
+        self.file_list.bind('<Delete>', lambda e: self._remove_selected_files())
+        self.file_list.bind('<BackSpace>', lambda e: self._remove_selected_files())
+
         # Configure tags for different statuses with colors
         self.file_list.tag_configure('success', foreground='green')
         self.file_list.tag_configure('error', foreground='red')
@@ -228,7 +232,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
