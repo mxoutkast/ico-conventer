@@ -213,6 +213,14 @@ class IcoConverterGUI:
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
         
+        # Bind keyboard shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        if sys.platform == 'darwin':
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        else:
+            self.file_list.bind('<Control-a>', self._select_all_files)
+
         # Control buttons frame
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=5, column=0, pady=(0, 10), sticky=tk.W)
@@ -228,7 +236,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -477,8 +485,26 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _select_all_files(self, event=None) -> str:
+        """
+        Select all files in the list.
+
+        Args:
+            event: The key event (optional)
+
+        Returns:
+            "break" to prevent default behavior
+        """
+        self.file_list.selection_set(self.file_list.get_children())
+        return "break"
+
+    def _remove_selected_files(self, event=None) -> None:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: The key event (optional)
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
