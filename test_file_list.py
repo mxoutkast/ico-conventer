@@ -30,6 +30,7 @@ def test_file_list_component():
             '_add_file_to_list',
             '_clear_file_list',
             '_remove_selected_files',
+            '_select_all_files',
             '_update_file_status',
             '_update_file_counter',
             '_format_file_size'
@@ -83,18 +84,25 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 4 columns
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
             print("  ✓ File counter label exists")
             
-            # Check for remove button
-            assert "Remove Selected" in content, "Remove button not found"
-            print("  ✓ Remove Selected button exists")
+            # Check for remove button with hint
+            assert 'text="Remove Selected (Del)"' in content, "Remove button with hint not found"
+            print("  ✓ Remove Selected button has keyboard hint")
+
+            # Check for bindings
+            assert "self.file_list.bind('<Delete>', self._remove_selected_files)" in content, "Delete binding not found"
+            print("  ✓ Delete key binding exists")
+
+            assert "self.file_list.bind('<Control-a>', self._select_all_files)" in content, "Select All binding not found"
+            print("  ✓ Ctrl+A key binding exists")
             
             # Check for status update method
             assert "_update_file_status" in content, "Status update method not found"
