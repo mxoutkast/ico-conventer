@@ -6,6 +6,15 @@ Test script to verify file list UI component functionality.
 import sys
 import inspect
 from pathlib import Path
+from unittest.mock import MagicMock
+
+# Mock dependencies before importing gui_wrapper
+mock_dnd = MagicMock()
+sys.modules['tkinterdnd2'] = mock_dnd
+
+mock_pil = MagicMock()
+sys.modules['PIL'] = mock_pil
+sys.modules['PIL.Image'] = mock_pil.Image
 
 
 def test_file_list_component():
@@ -83,10 +92,10 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 4 columns
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
@@ -99,6 +108,19 @@ def test_file_list_component():
             # Check for status update method
             assert "_update_file_status" in content, "Status update method not found"
             print("  ✓ File status update method exists")
+
+            # Check for keyboard bindings
+            assert "bind('<Delete>'" in content or "bind('<BackSpace>'" in content, \
+                "Delete/BackSpace key binding not found"
+            print("  ✓ Delete/BackSpace binding exists")
+
+            assert "bind('<Control-a>'" in content or "bind('<Command-a>'" in content, \
+                "Select All key binding not found"
+            print("  ✓ Select All binding exists")
+
+            # Check for select all method
+            assert "_select_all_files" in content, "Select All method not found"
+            print("  ✓ Select All method exists")
         
         print("\n" + "=" * 50)
         print("All tests PASSED! ✓")
