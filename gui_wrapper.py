@@ -186,6 +186,15 @@ class IcoConverterGUI:
         self.file_list.column('error', width=300, minwidth=200)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Add keyboard shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all)
+        except tk.TclError:
+            pass  # Ignore on non-macOS systems
+
         # Configure tags for different statuses with colors
         self.file_list.tag_configure('success', foreground='green')
         self.file_list.tag_configure('error', foreground='red')
@@ -477,11 +486,32 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _select_all(self, event: tk.Event = None) -> str:
+        """
+        Select all items in the file list.
+
+        Args:
+            event: The triggering event (optional)
+
+        Returns:
+            "break" to stop event propagation
+        """
+        self.file_list.selection_set(self.file_list.get_children())
+        return "break"
+
+    def _remove_selected_files(self, event: tk.Event = None) -> None:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: The triggering event (optional)
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
-            self._update_status("No files selected")
+            # Only show message if triggered by button click (no event)
+            # or explicit user action, to avoid spamming on stray keypresses
+            if event is None:
+                self._update_status("No files selected")
             return
         
         # Get filenames of selected items

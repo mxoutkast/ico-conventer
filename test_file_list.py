@@ -83,10 +83,10 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 4 columns
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
@@ -99,6 +99,17 @@ def test_file_list_component():
             # Check for status update method
             assert "_update_file_status" in content, "Status update method not found"
             print("  ✓ File status update method exists")
+
+            # Check for keyboard shortcuts
+            assert "<Delete>" in content, "Delete shortcut not found"
+            assert "<BackSpace>" in content, "BackSpace shortcut not found"
+            assert "<Control-a>" in content, "Control-a shortcut not found"
+            assert "<Command-a>" in content, "Command-a shortcut not found"
+            print("  ✓ Keyboard shortcuts (<Delete>, <BackSpace>, <Control-a>, <Command-a>) exist")
+
+            # Check for select all method
+            assert "_select_all" in content, "_select_all method not found"
+            print("  ✓ _select_all method exists")
         
         print("\n" + "=" * 50)
         print("All tests PASSED! ✓")
