@@ -9,6 +9,13 @@ from pathlib import Path
 
 # Test imports
 try:
+    # Mock dependencies to allow import
+    import sys
+    from unittest.mock import MagicMock
+    sys.modules['tkinterdnd2'] = MagicMock()
+    sys.modules['PIL'] = MagicMock()
+    sys.modules['ico_converter'] = MagicMock()
+
     from gui_wrapper import IcoConverterGUI
     print("✓ gui_wrapper imports successfully")
 except ImportError as e:

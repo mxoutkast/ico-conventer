@@ -213,6 +213,16 @@ class IcoConverterGUI:
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
         
+        # Keyboard shortcuts
+        self.file_list.bind('<Delete>', self._on_delete_key)
+        self.file_list.bind('<BackSpace>', self._on_delete_key)
+
+        # Platform-specific Select All
+        if self.root.tk.call('tk', 'windowingsystem') == 'aqua':
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        else:
+            self.file_list.bind('<Control-a>', self._select_all_files)
+
         # Control buttons frame
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=5, column=0, pady=(0, 10), sticky=tk.W)
@@ -228,7 +238,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -310,6 +320,15 @@ class IcoConverterGUI:
                 self.selected_sizes.append((size, size))
         self.selected_sizes.sort()
     
+    def _on_delete_key(self, event: tk.Event) -> None:
+        """Handle delete key press."""
+        self._remove_selected_files()
+
+    def _select_all_files(self, event: tk.Event) -> str:
+        """Select all files in the list."""
+        self.file_list.selection_set(self.file_list.get_children())
+        return "break"
+
     def _on_drop(self, event: tk.Event) -> None:
         """
         Handle file drop event.

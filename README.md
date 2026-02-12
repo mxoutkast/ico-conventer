@@ -95,6 +95,7 @@ python gui_wrapper.py
 - **Progress Tracking**: Real-time progress bar and status updates
 - **Error Display**: Detailed error messages for any conversion failures
 - **File Management**: View file list, remove selected files, or clear the entire list
+- **Keyboard Shortcuts**: Use `Delete` to remove files and `Ctrl+A` (or `Cmd+A`) to select all
 
 ### Using the GUI
 
