@@ -94,7 +94,7 @@ python gui_wrapper.py
 - **Batch Processing**: Convert multiple files at once
 - **Progress Tracking**: Real-time progress bar and status updates
 - **Error Display**: Detailed error messages for any conversion failures
-- **File Management**: View file list, remove selected files, or clear the entire list
+- **File Management**: View file list, remove selected files (Del), select all (Ctrl+A/Cmd+A), or clear the entire list
 
 ### Using the GUI
 
