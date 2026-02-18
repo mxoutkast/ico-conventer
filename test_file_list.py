@@ -6,7 +6,12 @@ Test script to verify file list UI component functionality.
 import sys
 import inspect
 from pathlib import Path
+from unittest.mock import MagicMock
 
+# Mock dependencies before importing gui_wrapper
+sys.modules['tkinterdnd2'] = MagicMock()
+sys.modules['PIL'] = MagicMock()
+sys.modules['PIL.Image'] = MagicMock()
 
 def test_file_list_component():
     """Test file list UI component functionality."""
@@ -30,6 +35,7 @@ def test_file_list_component():
             '_add_file_to_list',
             '_clear_file_list',
             '_remove_selected_files',
+            '_select_all_files',
             '_update_file_status',
             '_update_file_counter',
             '_format_file_size'
@@ -47,6 +53,18 @@ def test_file_list_component():
         params = list(sig.parameters.keys())
         assert 'self' in params and 'file_path' in params, "_add_file_to_list signature incorrect"
         print(f"  ✓ _add_file_to_list signature: {sig}")
+
+        # Check _remove_selected_files signature (must accept event)
+        sig = inspect.signature(gui_wrapper.IcoConverterGUI._remove_selected_files)
+        params = list(sig.parameters.keys())
+        assert 'event' in params, "_remove_selected_files must accept 'event' argument"
+        print(f"  ✓ _remove_selected_files signature: {sig}")
+
+        # Check _select_all_files signature
+        sig = inspect.signature(gui_wrapper.IcoConverterGUI._select_all_files)
+        params = list(sig.parameters.keys())
+        assert 'event' in params, "_select_all_files must accept 'event' argument"
+        print(f"  ✓ _select_all_files signature: {sig}")
         
         # Check _format_file_size signature
         sig = inspect.signature(gui_wrapper.IcoConverterGUI._format_file_size)
@@ -83,34 +101,33 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 3 columns (updated check from previous)
+            # The original test said 3 columns but code has 4: filename, size, status, error
+            # But let's check for at least filename, size, status
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
             print("  ✓ File counter label exists")
             
-            # Check for remove button
-            assert "Remove Selected" in content, "Remove button not found"
-            print("  ✓ Remove Selected button exists")
+            # Check for remove button text
+            assert 'text="Remove Selected (Del)"' in content, "Remove button text not updated"
+            print("  ✓ Remove Selected button has keyboard hint")
             
+            # Check for bindings
+            assert "self.file_list.bind('<Delete>', self._remove_selected_files)" in content, "Delete binding missing"
+            assert "self.file_list.bind('<BackSpace>', self._remove_selected_files)" in content, "BackSpace binding missing"
+            assert "self.file_list.bind('<Control-a>', self._select_all_files)" in content, "Control-a binding missing"
+            print("  ✓ Keyboard bindings exist (Delete, Backspace, Control-a)")
+
             # Check for status update method
             assert "_update_file_status" in content, "Status update method not found"
             print("  ✓ File status update method exists")
         
         print("\n" + "=" * 50)
         print("All tests PASSED! ✓")
-        print("=" * 50)
-        print("\nFile List UI Component Features:")
-        print("  • Displays filename, size, and status")
-        print("  • Shows file count (with proper singular/plural)")
-        print("  • Human-readable file size formatting")
-        print("  • Add files via drag-and-drop")
-        print("  • Remove selected files")
-        print("  • Clear all files")
-        print("  • Update file status individually")
         print("=" * 50)
         return 0
         
