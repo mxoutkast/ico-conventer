@@ -6,6 +6,12 @@ This script tests the error handling and display features without launching the 
 
 import sys
 from pathlib import Path
+from unittest.mock import MagicMock
+
+# Mock dependencies before importing gui_wrapper
+sys.modules['tkinterdnd2'] = MagicMock()
+sys.modules['PIL'] = MagicMock()
+sys.modules['PIL.Image'] = MagicMock()
 
 # Test imports
 try:
