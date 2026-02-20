@@ -6,6 +6,27 @@ Test script to verify file list UI component functionality.
 import sys
 import inspect
 from pathlib import Path
+from unittest.mock import MagicMock
+
+# Mock dependencies if they don't exist
+try:
+    import tkinterdnd2
+except ImportError:
+    sys.modules['tkinterdnd2'] = MagicMock()
+
+try:
+    import PIL
+except ImportError:
+    sys.modules['PIL'] = MagicMock()
+    sys.modules['PIL.Image'] = MagicMock()
+
+# Mock tkinter if needed (for headless environments)
+try:
+    import tkinter
+except ImportError:
+    sys.modules['tkinter'] = MagicMock()
+    sys.modules['tkinter.ttk'] = MagicMock()
+    sys.modules['tkinter.filedialog'] = MagicMock()
 
 
 def test_file_list_component():
@@ -83,10 +104,10 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 4 columns
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
