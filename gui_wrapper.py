@@ -67,7 +67,34 @@ class IcoConverterGUI:
         
         # Setup UI components
         self._setup_ui()
+
+        # Setup keyboard shortcuts
+        self._setup_keyboard_shortcuts()
     
+    def _setup_keyboard_shortcuts(self) -> None:
+        """Setup keyboard shortcuts for the application."""
+        # File list shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+
+        # Select all shortcut (platform dependent)
+        self.root.bind('<Control-a>', self._select_all_files)
+        try:
+            # macOS specific binding
+            self.root.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            # Command key not supported on this platform
+            pass
+
+    def _select_all_files(self, event=None) -> str:
+        """
+        Select all files in the file list.
+        Returns 'break' to stop event propagation.
+        """
+        children = self.file_list.get_children()
+        self.file_list.selection_set(children)
+        return 'break'
+
     def _setup_drag_drop(self) -> None:
         """Configure drag-and-drop functionality for the main window."""
         try:
@@ -228,7 +255,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -477,11 +504,14 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
+    def _remove_selected_files(self, event=None) -> None:
         """Remove selected files from the list."""
         selected_items = self.file_list.selection()
         if not selected_items:
-            self._update_status("No files selected")
+            # Only show message if triggered by button click, not keyboard shortcut
+            # (to avoid spamming status when pressing delete on empty selection)
+            if event is None:
+                self._update_status("No files selected")
             return
         
         # Get filenames of selected items
