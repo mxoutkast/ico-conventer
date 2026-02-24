@@ -176,6 +176,10 @@ class IcoConverterGUI:
             show='headings',
             selectmode='extended'
         )
+        # Bind delete keys for removal
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+
         self.file_list.heading('filename', text='Filename')
         self.file_list.heading('size', text='Size')
         self.file_list.heading('status', text='Status')
@@ -228,7 +232,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -477,7 +481,7 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
+    def _remove_selected_files(self, event=None) -> None:
         """Remove selected files from the list."""
         selected_items = self.file_list.selection()
         if not selected_items:
