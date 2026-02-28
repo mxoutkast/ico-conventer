@@ -1,0 +1,5 @@
+## 2024-05-14 - Explicit Treeview Keyboard Shortcuts
+
+**Learning:** Tkinter's `ttk.Treeview` component does not inherently support keyboard shortcuts for list management like item deletion (using `<Delete>` or `<BackSpace>`) or selection (`<Control-a>`). Unlike standard text inputs, Treeviews need explicit event bindings for common UI keyboard interactions. Furthermore, macOS bindings like `<Command-a>` must be wrapped in `try...except tk.TclError` to prevent cross-platform initialization crashes.
+
+**Action:** Whenever building lists, grids, or data tables using Tkinter Treeviews, proactively add explicit keyboard shortcuts (`<Delete>`, `<BackSpace>`, `<Control-a>`) for accessibility and power-user support. Additionally, update associated control buttons with visible shortcut hints (e.g., "Remove Selected (Del)") to ensure feature discoverability.
