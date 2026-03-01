@@ -1,0 +1,3 @@
+## 2025-03-01 - Keyboard Accessibility in Tkinter Treeviews
+**Learning:** Tkinter Treeviews do not have built-in keyboard bindings for standard operations like deleting items (Del/BackSpace) or selecting all items (Ctrl-A). Additionally, cross-platform differences exist for shortcuts (e.g., Command-A on macOS vs. Control-A on Windows/Linux).
+**Action:** Always explicitly bind standard keyboard shortcuts to list components in Tkinter to ensure basic keyboard accessibility. When binding macOS-specific keys (`<Command-...>`), wrap the `bind` call in a `try...except tk.TclError` block to prevent the application from crashing on non-macOS systems. Update button text to visually indicate these shortcuts (e.g., "Remove Selected (Del)").

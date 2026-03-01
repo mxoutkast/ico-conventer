@@ -186,6 +186,15 @@ class IcoConverterGUI:
         self.file_list.column('error', width=300, minwidth=200)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Add keyboard bindings for Treeview
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass # Ignore on non-macOS systems
+
         # Configure tags for different statuses with colors
         self.file_list.tag_configure('success', foreground='green')
         self.file_list.tag_configure('error', foreground='red')
@@ -228,7 +237,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -469,6 +478,20 @@ class IcoConverterGUI:
             size_bytes /= 1024.0
         return f"{size_bytes:.1f} TB"
     
+    def _select_all_files(self, event: Optional[tk.Event] = None) -> str:
+        """
+        Select all files in the list.
+
+        Args:
+            event: Optional Tkinter event for keyboard bindings
+
+        Returns:
+            'break' to stop event propagation
+        """
+        for item_id in self.file_list.get_children():
+            self.file_list.selection_add(item_id)
+        return 'break'
+
     def _clear_file_list(self) -> None:
         """Clear all files from the list."""
         self.dropped_files.clear()
@@ -477,8 +500,13 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _remove_selected_files(self, event: Optional[tk.Event] = None) -> None:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: Optional Tkinter event for keyboard bindings
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
