@@ -83,10 +83,10 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 4 columns
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
@@ -96,6 +96,13 @@ def test_file_list_component():
             assert "Remove Selected" in content, "Remove button not found"
             print("  ✓ Remove Selected button exists")
             
+            # Check for bindings
+            assert "self.file_list.bind('<Delete>', self._remove_selected_files)" in content, "Delete binding not found"
+            assert "self.file_list.bind('<BackSpace>', self._remove_selected_files)" in content, "Backspace binding not found"
+            assert "self.file_list.bind('<Control-a>', self._select_all_files)" in content, "Ctrl-A binding not found"
+            assert "self.file_list.bind('<Command-a>', self._select_all_files)" in content, "Cmd-A binding not found"
+            print("  ✓ Keyboard bindings exist")
+
             # Check for status update method
             assert "_update_file_status" in content, "Status update method not found"
             print("  ✓ File status update method exists")
