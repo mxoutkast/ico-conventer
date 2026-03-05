@@ -193,6 +193,15 @@ class IcoConverterGUI:
         self.file_list.tag_configure('pending', foreground='gray')
         self.file_list.tag_configure('converting', foreground='blue')
         
+        # Keyboard bindings for file list
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass  # macOS binding fails on other platforms
+
         # Scrollbar for file list
         scrollbar = ttk.Scrollbar(
             drop_zone,
@@ -228,7 +237,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -476,9 +485,29 @@ class IcoConverterGUI:
         self.progress_var.set(0)
         self._update_file_counter()
         self._update_status("List cleared")
+
+    def _select_all_files(self, event: Optional[tk.Event] = None) -> str:
+        """
+        Select all files in the file list.
+
+        Args:
+            event: The tkinter event (if triggered via binding)
+
+        Returns:
+            'break' to prevent default event handling
+        """
+        children = self.file_list.get_children()
+        if children:
+            self.file_list.selection_set(children)
+        return 'break'
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _remove_selected_files(self, event: Optional[tk.Event] = None) -> None:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: The tkinter event (if triggered via binding)
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
