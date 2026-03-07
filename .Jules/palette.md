@@ -1,0 +1,3 @@
+## 2024-05-24 - Explicit Visual Hints for Keyboard Shortcuts in Desktop Apps
+**Learning:** In desktop applications, simply adding keyboard shortcuts (like <Delete> for list items) isn't enough because they are invisible to the user. Explicitly updating the UI text to provide a visual hint (e.g., changing "Remove Selected" to "Remove Selected (Del)") makes the feature discoverable and significantly improves user efficiency.
+**Action:** When adding keyboard accessibility features to desktop/GUI components, always look for an opportunity to provide a visual cue or hint in the corresponding UI element (buttons, tooltips, or menus).
