@@ -1,0 +1,4 @@
+## 2024-03-08 - Added keyboard shortcut bindings and visual hints to GUI
+
+**Learning:** When developing cross-platform Tkinter applications, it's important to provide explicit visual hints for keyboard shortcuts (e.g., changing button text to 'Remove Selected (Del)'). Additionally, binding OS-specific shortcuts like `<Command-a>` for macOS must be wrapped in `try...except tk.TclError` to prevent application crashes on non-macOS systems like Windows and Linux.
+**Action:** Always include visual hints for keyboard shortcuts in UI text, and wrap OS-specific Tkinter key bindings in try/except blocks to ensure cross-platform stability.
