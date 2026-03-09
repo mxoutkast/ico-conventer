@@ -186,6 +186,15 @@ class IcoConverterGUI:
         self.file_list.column('error', width=300, minwidth=200)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Keyboard shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass
+
         # Configure tags for different statuses with colors
         self.file_list.tag_configure('success', foreground='green')
         self.file_list.tag_configure('error', foreground='red')
@@ -228,7 +237,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -476,9 +485,31 @@ class IcoConverterGUI:
         self.progress_var.set(0)
         self._update_file_counter()
         self._update_status("List cleared")
+
+    def _select_all_files(self, event: Optional[tk.Event] = None) -> Optional[str]:
+        """
+        Select all files in the list.
+
+        Args:
+            event: Optional tk.Event triggered by key binding
+
+        Returns:
+            "break" if triggered by event to prevent default behavior
+        """
+        children = self.file_list.get_children()
+        if children:
+            self.file_list.selection_set(children)
+        if event:
+            return "break"
+        return None
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _remove_selected_files(self, event: Optional[tk.Event] = None) -> None:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: Optional tk.Event triggered by key binding
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
