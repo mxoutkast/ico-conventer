@@ -1,0 +1,3 @@
+## 2024-05-24 - Explicit keybindings for list removal in Tkinter
+**Learning:** Tkinter Treeview widgets require explicit bindings for `<Delete>` and `<BackSpace>` to support item removal, as this is not default behavior. Visual hints like "(Del)" on buttons help users discover these shortcuts. Also macOS specific keys like `<Command-a>` must be wrapped in `try...except tk.TclError` to prevent crashes on non-macOS systems.
+**Action:** When adding list/table components in Tkinter, always explicitly bind removal shortcuts and add visual hints to corresponding buttons. Handle platform-specific bindings safely.
