@@ -83,10 +83,10 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 4 columns
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
@@ -102,15 +102,6 @@ def test_file_list_component():
         
         print("\n" + "=" * 50)
         print("All tests PASSED! ✓")
-        print("=" * 50)
-        print("\nFile List UI Component Features:")
-        print("  • Displays filename, size, and status")
-        print("  • Shows file count (with proper singular/plural)")
-        print("  • Human-readable file size formatting")
-        print("  • Add files via drag-and-drop")
-        print("  • Remove selected files")
-        print("  • Clear all files")
-        print("  • Update file status individually")
         print("=" * 50)
         return 0
         
