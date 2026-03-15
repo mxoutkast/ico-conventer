@@ -1,0 +1,3 @@
+## 2026-03-15 - Added List Keyboard Shortcuts
+**Learning:** Tkinter Treeview widgets do not natively support list management keyboard shortcuts (Delete, Backspace) or selection shortcuts (Ctrl/Cmd-A). Furthermore, on non-macOS platforms, attempting to bind `<Command-a>` results in a `tk.TclError` exception.
+**Action:** When working with `ttk.Treeview`, explicitly bind `<Delete>`, `<BackSpace>`, and `<Control-a>` to custom handler methods (which must accept an `event=None` parameter). Wrap the `<Command-a>` binding in a `try...except tk.TclError` block. Always update related UI elements (e.g., button text) to provide visual hints for the new shortcuts.
