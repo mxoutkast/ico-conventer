@@ -176,6 +176,16 @@ class IcoConverterGUI:
             show='headings',
             selectmode='extended'
         )
+
+        # Add keyboard shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass # Ignore on non-macOS systems
+
         self.file_list.heading('filename', text='Filename')
         self.file_list.heading('size', text='Size')
         self.file_list.heading('status', text='Status')
@@ -228,7 +238,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -476,9 +486,18 @@ class IcoConverterGUI:
         self.progress_var.set(0)
         self._update_file_counter()
         self._update_status("List cleared")
+
+    def _select_all_files(self, event: Optional[tk.Event] = None) -> str:
+        """Select all items in the file list."""
+        if self.file_list.get_children():
+            self.file_list.selection_set(self.file_list.get_children())
+        return 'break'
     
-    def _remove_selected_files(self) -> None:
+    def _remove_selected_files(self, event: Optional[tk.Event] = None) -> None:
         """Remove selected files from the list."""
+        if self.is_converting:
+            return
+
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
