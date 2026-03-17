@@ -1,0 +1,3 @@
+## 2024-05-30 - Tkinter Treeview Keyboard Accessibility
+**Learning:** Tkinter Treeview widgets do not come with default keyboard bindings for expected basic behaviors like item removal (Delete/Backspace) or select-all (Ctrl-A/Cmd-A). This requires explicit bindings and corresponding handler methods. Additionally, MacOS specific bindings like `<Command-a>` must be wrapped in `try...except tk.TclError` to prevent crashes on non-MacOS systems.
+**Action:** When implementing file lists or any interactive lists with Tkinter Treeview, explicitly bind `<Delete>`, `<BackSpace>`, `<Control-a>`, and `<Command-a>` to ensure proper keyboard accessibility. Provide visual cues for these shortcuts in the UI text where applicable.
