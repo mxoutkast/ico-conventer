@@ -1,0 +1,3 @@
+## 2024-06-25 - Explicit Tkinter Treeview Keyboard Bindings and Text Hinting
+**Learning:** Tkinter `ttk.Treeview` widgets do not implicitly support expected keyboard behaviors like `<Delete>` or `<BackSpace>` to remove items. Additionally, users often miss these shortcuts without visual hints.
+**Action:** When working with list-based Tkinter UI elements, always explicitly bind removal (`<Delete>`, `<BackSpace>`) and selection (`<Control-a>`, `<Command-a>`) shortcuts. To improve discoverability, add a visual hint in related button text (e.g., changing "Remove Selected" to "Remove Selected (Del)").
