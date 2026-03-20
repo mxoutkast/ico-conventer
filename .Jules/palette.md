@@ -1,0 +1,3 @@
+## 2024-05-15 - Added Keyboard Shortcut Hints for File List
+**Learning:** Tkinter Treeview widgets don't have default bindings for removing elements (Delete/Backspace) or selecting all elements (Ctrl+A), which violates typical user expectations for lists. Binding `<Command-a>` for macOS compatibility needs to be wrapped in a try/except block because `tk.TclError` will be thrown on Windows/Linux environments.
+**Action:** Always add explicit keyboard bindings (`<Delete>`, `<BackSpace>`, `<Control-a>`) to list widgets and append visual hints like `(Del)` to the corresponding buttons to improve usability and accessibility.
