@@ -84,9 +84,9 @@ def test_file_list_component():
             content = f.read()
             
             # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
@@ -104,7 +104,7 @@ def test_file_list_component():
         print("All tests PASSED! ✓")
         print("=" * 50)
         print("\nFile List UI Component Features:")
-        print("  • Displays filename, size, and status")
+        print("  • Displays filename, size, status, and error details")
         print("  • Shows file count (with proper singular/plural)")
         print("  • Human-readable file size formatting")
         print("  • Add files via drag-and-drop")
