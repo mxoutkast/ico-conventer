@@ -1,0 +1,3 @@
+## 2024-05-24 - Treeview Keyboard Shortcuts
+**Learning:** Tkinter Treeview widgets do not automatically bind standard list interaction keys (like `<Delete>` or `<BackSpace>`) to delete actions. Explicit bindings are required. Additionally, when binding macOS-specific keys like `<Command-a>`, they must be wrapped in a `try...except tk.TclError` block to prevent the application from crashing on non-macOS systems.
+**Action:** When working with custom list-like components in Tkinter (like Treeview), always manually implement keyboard interactions (Delete, Select All) and safely handle OS-specific modifiers. Include the keyboard shortcuts in the UI text where applicable.
