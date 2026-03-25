@@ -1,0 +1,3 @@
+## 2026-03-25 - [Keyboard Shortcut Hints in Button Labels]
+**Learning:** Adding keyboard shortcuts (like <Delete> and <Control-a>) to interactive list components like Treeview is a crucial micro-UX touch. Visually hinting at these shortcuts in related UI text (e.g., changing 'Remove Selected' to 'Remove Selected (Del)') significantly improves discoverability and keyboard accessibility.
+**Action:** Always consider if a custom component could benefit from common OS keyboard shortcuts. When implementing shortcuts, explicitly indicate them in the corresponding UI button or tooltip to inform the user.
