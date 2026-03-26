@@ -193,6 +193,17 @@ class IcoConverterGUI:
         self.file_list.tag_configure('pending', foreground='gray')
         self.file_list.tag_configure('converting', foreground='blue')
         
+        # Keyboard accessibility bindings for file list
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+
+        # macOS specific select all
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass  # Ignore on non-macOS systems
+
         # Scrollbar for file list
         scrollbar = ttk.Scrollbar(
             drop_zone,
@@ -228,7 +239,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -469,6 +480,19 @@ class IcoConverterGUI:
             size_bytes /= 1024.0
         return f"{size_bytes:.1f} TB"
     
+    def _select_all_files(self, event: Optional[tk.Event] = None) -> str:
+        """
+        Select all files in the file list.
+
+        Args:
+            event: The keyboard event (optional)
+
+        Returns:
+            String 'break' to stop default event propagation
+        """
+        self.file_list.selection_set(self.file_list.get_children())
+        return 'break'
+
     def _clear_file_list(self) -> None:
         """Clear all files from the list."""
         self.dropped_files.clear()
@@ -477,8 +501,13 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _remove_selected_files(self, event: Optional[tk.Event] = None) -> None:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: The keyboard event (optional)
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")

@@ -1,0 +1,3 @@
+## 2024-03-26 - Keyboard Accessibility for List Controls
+**Learning:** Tkinter Treeview widgets do not natively support keyboard-based item removal (<Delete> or <BackSpace>) or selection shortcuts (<Control-a>, <Command-a>). Furthermore, macOS bindings (<Command-a>) will crash the application on Windows/Linux if not explicitly caught with `try...except tk.TclError`.
+**Action:** Always explicitly bind `<Delete>` and `<BackSpace>` for list removal, implement custom `_select_all_files` returning `'break'`, wrap macOS bindings in try-except, and add visual keyboard hints (e.g., '(Del)') to corresponding UI buttons.
