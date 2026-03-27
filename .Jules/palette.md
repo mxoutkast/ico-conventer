@@ -1,0 +1,3 @@
+## 2024-05-24 - Tkinter Treeview Keyboard Accessibility
+**Learning:** Tkinter `Treeview` widgets don't come with default keyboard shortcuts for basic list interactions like deleting items or selecting all. For keyboard accessibility, explicit event bindings (`<Delete>`, `<BackSpace>`, `<Control-a>`) must be manually mapped. Furthermore, `<Command-a>` bindings should be enclosed in a `try...except tk.TclError` block to prevent crashes on non-macOS systems.
+**Action:** Always verify keyboard accessibility on custom or native framework widgets. Do not assume default key bindings for actions like "delete" or "select all", and handle cross-platform OS shortcuts defensively.
