@@ -1,0 +1,3 @@
+## 2024-05-14 - Add Keyboard Accessibility explicitly to Tkinter Treeview
+**Learning:** Tkinter `ttk.Treeview` components do not have default keyboard event mappings for standard actions like deleting items or selecting all items. This can break keyboard accessibility for users relying on keys like <Delete> or <Control-a>.
+**Action:** Always explicitly bind standard keyboard shortcuts (`<Delete>`, `<BackSpace>`, `<Control-a>`) to their corresponding handler methods in Tkinter Treeview widgets to ensure basic keyboard accessibility. Return `'break'` in the handler for `<Control-a>` to prevent any default application-level propagation. Also provide visual hints on relevant buttons (e.g., "Remove Selected (Del)").
