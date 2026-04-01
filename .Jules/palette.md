@@ -1,0 +1,3 @@
+## 2025-02-18 - Added keyboard shortcuts and visual hints
+**Learning:** Tkinter Treeview widgets require explicit key bindings for common operations like <Delete> or <BackSpace> to function appropriately. Moreover, custom key bindings must intercept event propagation by returning 'break', and macOS specific bindings like <Command-a> should be wrapped in `try..except tk.TclError` to prevent application crashes on other platforms. Adding visual hints inside buttons for these shortcuts helps improve discoverability.
+**Action:** When adding shortcut features, explicitly bind them to widgets, return 'break' where needed, wrap non-cross platform bindings in try-except blocks, and add visual shortcut hints inside relevant buttons.
