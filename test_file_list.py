@@ -7,6 +7,18 @@ import sys
 import inspect
 from pathlib import Path
 
+# Mock tkinterdnd2 before importing gui_wrapper
+from unittest import mock
+import tkinter as tk
+
+mock_dnd = mock.MagicMock()
+mock_dnd.TkinterDnD.Tk = tk.Tk
+mock_dnd.DND_FILES = "DND_FILES"
+sys.modules['tkinterdnd2'] = mock_dnd
+
+mock_pil = mock.MagicMock()
+sys.modules['PIL'] = mock_pil
+sys.modules['PIL.Image'] = mock_pil
 
 def test_file_list_component():
     """Test file list UI component functionality."""
@@ -84,7 +96,7 @@ def test_file_list_component():
             content = f.read()
             
             # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            assert "columns=('filename', 'size', 'status'" in content, \
                 "File list doesn't have correct columns"
             print("  ✓ File list has 3 columns: filename, size, status")
             

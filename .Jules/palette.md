@@ -1,0 +1,3 @@
+## 2024-05-24 - Explicit List Keybindings and Hints
+**Learning:** Default Tkinter Treeview widgets do not implicitly bind common keyboard shortcuts like `<Delete>`/`<BackSpace>` for removing items or `<Control-a>`/`<Command-a>` for selecting all items. Furthermore, users often do not know these shortcuts exist unless hinted at in the UI.
+**Action:** Always explicitly bind these list management keyboard shortcuts to relevant methods, handle event propagation correctly (returning `'break'` when necessary), include cross-platform shortcuts (wrapping macOS `<Command-a>` in `try...except tk.TclError`), and visually hint at these shortcuts in related UI text (e.g., changing button text to "Remove Selected (Del)").
