@@ -213,6 +213,15 @@ class IcoConverterGUI:
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
         
+        # Configure keyboard shortcuts for file list
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass  # Not on macOS
+
         # Control buttons frame
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=5, column=0, pady=(0, 10), sticky=tk.W)
@@ -228,7 +237,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -477,12 +486,17 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
+    def _select_all_files(self, event: tk.Event = None) -> str:
+        """Select all files in the list."""
+        self.file_list.selection_set(self.file_list.get_children())
+        return 'break'
+
+    def _remove_selected_files(self, event: tk.Event = None) -> Optional[str]:
         """Remove selected files from the list."""
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
-            return
+            return 'break' if event else None
         
         # Get filenames of selected items
         selected_filenames = set()
@@ -503,6 +517,7 @@ class IcoConverterGUI:
         
         self._update_file_counter()
         self._update_status(f"Removed {len(selected_items)} file(s)")
+        return 'break' if event else None
     
     def _update_file_status(self, file_path: Path, status: str, error_message: str = '') -> None:
         """
