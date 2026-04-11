@@ -3,3 +3,6 @@
 
 # Git worktrees
 .worktrees/
+__pycache__/
+*.py[cod]
+*.class$

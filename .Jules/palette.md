@@ -1,0 +1,3 @@
+## 2026-04-11 - Tkinter Treeview Missing Default Bindings
+**Learning:** Tkinter Treeview widgets, unlike some native list components, do not have built-in keyboard behaviors for common list operations like item removal (<Delete>, <BackSpace>) or select all (<Control-a>, <Command-a>). These must be explicitly bound. Furthermore, custom event handler methods must return 'break' to prevent any default Tkinter event propagation from interfering.
+**Action:** When working with Tkinter Treeviews for list management, always explicitly implement and bind common list keyboard shortcuts to improve UX, and ensure handlers return 'break'.
