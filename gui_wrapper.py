@@ -193,6 +193,15 @@ class IcoConverterGUI:
         self.file_list.tag_configure('pending', foreground='gray')
         self.file_list.tag_configure('converting', foreground='blue')
         
+        # Keyboard shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass # Non-macOS system
+
         # Scrollbar for file list
         scrollbar = ttk.Scrollbar(
             drop_zone,
@@ -228,7 +237,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
