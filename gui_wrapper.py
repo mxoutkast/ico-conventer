@@ -210,6 +210,17 @@ class IcoConverterGUI:
         )
         self.file_counter.grid(row=1, column=0, columnspan=2, sticky=tk.W, pady=(5, 0))
         
+        # Keyboard shortcuts for file list
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+
+        # Cross-platform bindings for macOS
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass # Ignore if not on macOS
+
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
         
@@ -228,7 +239,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -476,13 +487,23 @@ class IcoConverterGUI:
         self.progress_var.set(0)
         self._update_file_counter()
         self._update_status("List cleared")
+
+    def _select_all_files(self, event: tk.Event | None = None) -> str:
+        """Select all files in the list."""
+        for item in self.file_list.get_children():
+            self.file_list.selection_add(item)
+        if event:
+            return 'break'
+        return ''
     
-    def _remove_selected_files(self) -> None:
+    def _remove_selected_files(self, event: tk.Event | None = None) -> str:
         """Remove selected files from the list."""
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
-            return
+            if event:
+                return 'break'
+            return ''
         
         # Get filenames of selected items
         selected_filenames = set()
@@ -503,6 +524,10 @@ class IcoConverterGUI:
         
         self._update_file_counter()
         self._update_status(f"Removed {len(selected_items)} file(s)")
+
+        if event:
+            return 'break'
+        return ''
     
     def _update_file_status(self, file_path: Path, status: str, error_message: str = '') -> None:
         """

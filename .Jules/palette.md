@@ -1,0 +1,3 @@
+## 2026-04-19 - Keyboard Accessibility for File Lists
+**Learning:** Users expect standard keyboard shortcuts like <Delete> to remove items and <Control-a>/<Command-a> to select all in list views, but Tkinter Treeview widgets do not support these by default and require explicit bindings. Also, modifying method signatures in Python 3.12 can safely use the `|` union operator for Optional types (e.g., `tk.Event | None`) instead of requiring an `Optional` import from `typing`.
+**Action:** Always implement explicit bindings for standard list operations in Tkinter Treeviews, ensure event handlers conditionally return `'break'` to prevent default behavior propagation, and utilize modern Python syntax for cleaner type hinting.
