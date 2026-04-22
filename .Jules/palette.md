@@ -1,0 +1,3 @@
+## 2024-05-24 - File List Keyboard Shortcuts
+**Learning:** Users naturally expect standard keyboard navigation and shortcuts (like Delete to remove items, Ctrl+A to select all) in data grid/list components. Tkinter Treeview widgets require explicit bindings for these actions, which are not provided by default, resulting in a frustrating experience if omitted.
+**Action:** Always implement explicit keyboard bindings (`<Delete>`, `<BackSpace>`, `<Control-a>`) for list/grid components to ensure basic keyboard accessibility and a native feel. Additionally, provide visual hints in the UI (e.g., button text) to inform users of these shortcuts.

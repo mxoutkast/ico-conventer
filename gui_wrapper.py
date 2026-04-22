@@ -186,6 +186,17 @@ class IcoConverterGUI:
         self.file_list.column('error', width=300, minwidth=200)
         self.file_list.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Keyboard bindings
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+
+        # macOS specific bindings wrapped in try-except
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass
+
         # Configure tags for different statuses with colors
         self.file_list.tag_configure('success', foreground='green')
         self.file_list.tag_configure('error', foreground='red')
@@ -228,7 +239,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -477,12 +488,20 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _remove_selected_files(self, event: tk.Event | None = None) -> Optional[str]:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: Optional Tkinter event if called via binding
+
+        Returns:
+            'break' to stop event propagation if called via binding, None otherwise
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
-            return
+            return 'break' if event else None
         
         # Get filenames of selected items
         selected_filenames = set()
@@ -503,7 +522,28 @@ class IcoConverterGUI:
         
         self._update_file_counter()
         self._update_status(f"Removed {len(selected_items)} file(s)")
+
+        if event:
+            return 'break'
     
+    def _select_all_files(self, event: tk.Event | None = None) -> Optional[str]:
+        """
+        Select all files in the list.
+
+        Args:
+            event: Optional Tkinter event if called via binding
+
+        Returns:
+            'break' to stop event propagation if called via binding, None otherwise
+        """
+        children = self.file_list.get_children()
+        if children:
+            self.file_list.selection_set(children)
+            self._update_status(f"Selected all {len(children)} file(s)")
+
+        if event:
+            return 'break'
+
     def _update_file_status(self, file_path: Path, status: str, error_message: str = '') -> None:
         """
         Update the status of a specific file in the list.
