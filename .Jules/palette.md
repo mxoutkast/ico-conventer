@@ -1,0 +1,3 @@
+## 2024-05-15 - Explicit Keybindings for Treeview Deletion
+**Learning:** Tkinter Treeview widgets do not implement deletion logic by default when pressing `<Delete>` or `<BackSpace>`. Developers must explicitly bind these keys and route them to their custom removal methods. Furthermore, keybindings in Tkinter methods handling both buttons and keyboard events should accept an optional `event` argument and conditionally return `'break'` to prevent default event propagation and unexpected side effects.
+**Action:** When working with list or table components in Tkinter (like `ttk.Treeview`), ensure explicit bindings for removal actions are added and visually hinted at via UI text.
