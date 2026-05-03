@@ -1,0 +1,3 @@
+## 2024-05-03 - Keyboard Bindings and Visual Hints in Tkinter
+**Learning:** Users benefit from explicit keyboard shortcuts in Tkinter Treeview widgets (like Del/Backspace for removal, Ctrl+A for select all) since these are not default behaviors. Coupling these explicit bindings with visual hints in the UI text (e.g., "Remove Selected (Del)") significantly improves accessibility and discoverability without requiring complex tooltips or additional UI elements.
+**Action:** Always verify if standard keyboard shortcuts are supported by default in the chosen widget framework, manually implement them if missing, and add subtle visual text cues to the corresponding UI buttons.
