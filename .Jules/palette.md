@@ -1,0 +1,3 @@
+## 2024-05-17 - Explicit Tkinter List Bindings
+**Learning:** In Tkinter Treeview widgets, explicit keyboard bindings (e.g., `<Delete>`, `<BackSpace>`) must be manually added and the event propagation prevented by returning `'break'` to function correctly and align with user expectations. Furthermore, adding visual hints in standard UI elements like text buttons (e.g., "Remove Selected (Del)") substantially increases discoverability.
+**Action:** Always ensure Tkinter lists have explicit bindings for common operations (delete, select all) and visually signal these keybindings in the corresponding UI buttons. Remember to catch `tk.TclError` for macOS specific bindings like `<Command-a>` on non-macOS platforms.
