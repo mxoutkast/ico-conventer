@@ -1,0 +1,3 @@
+## 2024-05-24 - explicit keyboard shortcuts in Tkinter
+**Learning:** Tkinter Treeview widgets do not have default keyboard bindings for `<Delete>` or `<BackSpace>`, unlike typical list inputs. Keyboard users cannot intuitively remove selected items. Also, adding `(Del)` or another visual shortcut hint directly to the UI button text (e.g. "Remove Selected (Del)") greatly improves usability.
+**Action:** When implementing custom list-based widgets or replacing standard ones in Tkinter, explicitly bind intuitive keys for editing (like delete and select-all) and surface these shortcuts in button labels so they are easily discoverable.
