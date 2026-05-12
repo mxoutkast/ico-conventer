@@ -1,0 +1,3 @@
+## 2024-05-18 - Explicit List Keyboard Navigation and Visual Hints
+**Learning:** Tkinter Treeview widgets do not support keyboard navigation (like Delete/Backspace for removal or Control-A for select all) by default. Users expect standard list behaviors. When adding keyboard shortcuts, it is important to provide visual hints in the UI (e.g. updating a 'Remove' button text to 'Remove (Del)') so users can discover the functionality.
+**Action:** Always explicitly bind standard keyboard shortcuts to list widgets and update corresponding UI labels with shortcut hints to improve discoverability and accessibility.
