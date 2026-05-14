@@ -1,0 +1,3 @@
+## 2023-11-20 - Treeview Keyboard Accessibility
+**Learning:** Tkinter Treeviews lack default bindings for typical list operations like item deletion and "select all". Not binding keyboard events effectively degrades keyboard accessibility for list management. Visual hints in button text are important to educate users about available keyboard shortcuts.
+**Action:** Always explicitly bind `<Delete>`, `<BackSpace>`, `<Control-a>`, and `<Command-a>` for list widgets, and return `'break'` to prevent default Tkinter event propagation. Update associated UI buttons with shortcut hints (e.g. `(Del)`).
