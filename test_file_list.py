@@ -30,6 +30,7 @@ def test_file_list_component():
             '_add_file_to_list',
             '_clear_file_list',
             '_remove_selected_files',
+            '_select_all_files',
             '_update_file_status',
             '_update_file_counter',
             '_format_file_size'
@@ -83,17 +84,17 @@ def test_file_list_component():
         with open('gui_wrapper.py', 'r') as f:
             content = f.read()
             
-            # Check for file list creation with 3 columns
-            assert "columns=('filename', 'size', 'status')" in content, \
+            # Check for file list creation with 4 columns
+            assert "columns=('filename', 'size', 'status', 'error')" in content, \
                 "File list doesn't have correct columns"
-            print("  ✓ File list has 3 columns: filename, size, status")
+            print("  ✓ File list has 4 columns: filename, size, status, error")
             
             # Check for file counter
             assert "self.file_counter" in content, "File counter not found"
             print("  ✓ File counter label exists")
             
             # Check for remove button
-            assert "Remove Selected" in content, "Remove button not found"
+            assert "Remove Selected (Del)" in content, "Remove button not found"
             print("  ✓ Remove Selected button exists")
             
             # Check for status update method

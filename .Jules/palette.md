@@ -1,0 +1,3 @@
+## 2024-05-17 - Explicit Keyboard Bindings and Visual Hints for Tkinter Lists
+**Learning:** Tkinter lists (Treeview) do not have default keyboard bindings for item removal (`<Delete>`, `<BackSpace>`) or selecting all items (`<Control-a>`, `<Command-a>`). They require explicit bindings. Also, when bindings like `Del` are present, giving a visual hint (e.g. `Remove Selected (Del)`) significantly improves UI accessibility and intuitive usage. Additionally, handling Tkinter UI bindings gracefully requires returning `'break'` to stop event propagation.
+**Action:** When working on lists, explicitly provide standard interaction bindings and reflect the existence of the most relevant keyboard shortcuts as a hint on the associated action buttons to guide users.
