@@ -3,3 +3,5 @@
 
 # Git worktrees
 .worktrees/
+.pyc
+__pycache__
