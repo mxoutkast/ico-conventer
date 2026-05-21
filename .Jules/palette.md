@@ -1,0 +1,3 @@
+## 2024-05-18 - Treeview Keyboard Navigation Constraints
+**Learning:** Tkinter Treeview widgets in this project do not come with default bindings for basic list actions like item removal (`<Delete>`, `<BackSpace>`) or selecting all (`<Control-a>`, `<Command-a>`). They must be explicitly bound. Furthermore, custom key event handlers must return `'break'` to prevent default Tkinter event propagation from interfering with the custom logic, and macOS-specific keys (`<Command-a>`) need to be wrapped in `try...except tk.TclError` to prevent crashes on non-macOS platforms.
+**Action:** Always proactively add explicit keyboard event bindings and UI hints for standard list interactions when implementing Tkinter Treeview widgets to ensure keyboard accessibility.
