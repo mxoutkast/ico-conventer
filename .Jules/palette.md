@@ -1,0 +1,3 @@
+## 2024-05-23 - Add explicit keyboard bindings and hints to Treeview
+**Learning:** Tkinter's Treeview widget doesn't have default keyboard bindings for `<Delete>` or `<BackSpace>` to remove items, or `<Control-a>` to select all items. Additionally, non-obvious keyboard shortcuts should be visually hinted in the UI text (e.g. adding "(Del)" to the removal button). Cross-platform bindings like macOS's `<Command-a>` should be wrapped in a `try...except tk.TclError` to prevent crashes on other OSes.
+**Action:** When adding list/treeview components, always explicitly add standard keyboard behaviors (`<Delete>`, `<Control-a>`) with event propagation prevention (`return 'break'`). Ensure UI buttons display the shortcut hint to improve discoverability and accessibility.
