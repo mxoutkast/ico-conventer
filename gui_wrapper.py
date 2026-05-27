@@ -213,6 +213,15 @@ class IcoConverterGUI:
         # Configure drag-and-drop for drop zone
         self._setup_drop_zone_drag_drop(drop_zone)
         
+        # Configure keyboard bindings
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass # Ignore on non-macOS systems
+
         # Control buttons frame
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=5, column=0, pady=(0, 10), sticky=tk.W)
@@ -228,7 +237,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -469,6 +478,13 @@ class IcoConverterGUI:
             size_bytes /= 1024.0
         return f"{size_bytes:.1f} TB"
     
+    def _select_all_files(self, event: tk.Event | None = None) -> str:
+        """Select all files in the list."""
+        self.file_list.selection_set(self.file_list.get_children())
+        if event:
+            return 'break'
+        return ''
+
     def _clear_file_list(self) -> None:
         """Clear all files from the list."""
         self.dropped_files.clear()
@@ -477,12 +493,14 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
+    def _remove_selected_files(self, event: tk.Event | None = None) -> str | None:
         """Remove selected files from the list."""
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
-            return
+            if event:
+                return 'break'
+            return None
         
         # Get filenames of selected items
         selected_filenames = set()
@@ -503,6 +521,9 @@ class IcoConverterGUI:
         
         self._update_file_counter()
         self._update_status(f"Removed {len(selected_items)} file(s)")
+        if event:
+            return 'break'
+        return None
     
     def _update_file_status(self, file_path: Path, status: str, error_message: str = '') -> None:
         """
