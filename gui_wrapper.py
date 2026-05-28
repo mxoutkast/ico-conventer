@@ -193,6 +193,16 @@ class IcoConverterGUI:
         self.file_list.tag_configure('pending', foreground='gray')
         self.file_list.tag_configure('converting', foreground='blue')
         
+        # Keyboard shortcuts
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        # Wrap macOS binding in try-except to prevent crashes on non-macOS systems
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass
+
         # Scrollbar for file list
         scrollbar = ttk.Scrollbar(
             drop_zone,
@@ -228,7 +238,7 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
@@ -477,7 +487,16 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
+    def _select_all_files(self, event: tk.Event | None = None) -> str:
+        """
+        Select all items in the file list.
+        Returns 'break' to prevent default Tkinter behavior.
+        """
+        for item in self.file_list.get_children():
+            self.file_list.selection_add(item)
+        return 'break'
+
+    def _remove_selected_files(self, event: tk.Event | None = None) -> None:
         """Remove selected files from the list."""
         selected_items = self.file_list.selection()
         if not selected_items:
