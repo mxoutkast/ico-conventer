@@ -1,0 +1,3 @@
+## 2024-05-17 - Tkinter Treeview Implicit Actions
+**Learning:** Tkinter Treeview widgets do not come with default key bindings for basic list manipulation actions (e.g., removing items with `<Delete>`/`<BackSpace>` or selecting all items with `<Control-a>`). The user interface becomes confusing to navigate with keyboards if these standard interactions aren't manually bound and correctly handled (such as returning `'break'` for `Select All` to prevent unwanted Tkinter defaults).
+**Action:** Always manually bind explicit keyboard shortcuts (`<Delete>`, `<BackSpace>`, `<Control-a>`, `<Command-a>`) to list manipulation operations and update UI button text labels (e.g., "Remove Selected (Del)") to provide visible keyboard hints for standard accessibility expectations.
