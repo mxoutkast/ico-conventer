@@ -1,0 +1,1 @@
+## 2024-05-30 - Keyboard Accessibility\n**Learning:** The Tkinter treeview needs explicit keybindings for actions like item removal (<Delete>, <BackSpace>) and select all (<Control-a>). Also buttons should indicate their shortcuts.\n**Action:** Add these bindings.
