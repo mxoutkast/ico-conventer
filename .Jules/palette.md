@@ -1,0 +1,3 @@
+## 2024-05-18 - Added Keyboard Shortcut Hints and Bindings to File List
+**Learning:** Adding keyboard shortcuts (`Del`, `Ctrl+A`) for file lists greatly improves efficiency for power users. Including the shortcut as a visual hint in the UI button text (e.g., 'Remove Selected (Del)') enhances discoverability, so users are aware of the shortcut without having to guess or read external documentation.
+**Action:** Consistently bind common keyboard interactions (like remove/delete, select all) to their standard keys, and always include brief visual hints in the relevant UI elements to make these shortcuts discoverable.
