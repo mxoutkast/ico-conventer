@@ -1,0 +1,3 @@
+## 2024-03-01 - Explicitly Binding Default Keyboard Actions for Treeviews
+**Learning:** In Tkinter, `ttk.Treeview` components do not have default keyboard bindings for common item management interactions like deleting items (e.g., `<Delete>`, `<BackSpace>`) or selecting all items (`<Control-a>`, `<Command-a>`). They must be manually configured, and users shouldn't have to guess these shortcuts.
+**Action:** Always add explicit keyboard bindings for standard actions on list-based widgets to ensure keyboard accessibility. Also, visually hint at the shortcuts in the UI text (e.g., "Remove Selected (Del)") to make the application more discoverable and intuitive.
