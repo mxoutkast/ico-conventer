@@ -48,7 +48,7 @@ def main():
     print("4. While conversion is in progress:")
     print("   - Try to move the window around")
     print("   - Try to resize the window")
-    print("   - Try to click on other buttons (Clear, Remove Selected)")
+    print("   - Try to click on other buttons (Clear, Remove Selected (Del))")
     print("   - Observe that the window remains responsive")
     print()
     print("5. Expected behavior:")
