@@ -228,11 +228,20 @@ class IcoConverterGUI:
         # Remove selected button
         remove_button = ttk.Button(
             button_frame,
-            text="Remove Selected",
+            text="Remove Selected (Del)",
             command=self._remove_selected_files
         )
         remove_button.pack(side=tk.LEFT, padx=5)
         
+        # Configure file list keyboard bindings
+        self.file_list.bind('<Delete>', self._remove_selected_files)
+        self.file_list.bind('<BackSpace>', self._remove_selected_files)
+        self.file_list.bind('<Control-a>', self._select_all_files)
+        try:
+            self.file_list.bind('<Command-a>', self._select_all_files)
+        except tk.TclError:
+            pass  # <Command-a> is macOS specific
+
         # Convert button
         convert_button = ttk.Button(
             button_frame,
@@ -477,12 +486,20 @@ class IcoConverterGUI:
         self._update_file_counter()
         self._update_status("List cleared")
     
-    def _remove_selected_files(self) -> None:
-        """Remove selected files from the list."""
+    def _remove_selected_files(self, event: tk.Event | None = None) -> str | None:
+        """
+        Remove selected files from the list.
+
+        Args:
+            event: Optional tkinter event when triggered by keyboard
+
+        Returns:
+            'break' if triggered by event to prevent default propagation, None otherwise
+        """
         selected_items = self.file_list.selection()
         if not selected_items:
             self._update_status("No files selected")
-            return
+            return 'break' if event else None
         
         # Get filenames of selected items
         selected_filenames = set()
@@ -503,6 +520,27 @@ class IcoConverterGUI:
         
         self._update_file_counter()
         self._update_status(f"Removed {len(selected_items)} file(s)")
+
+        if event:
+            return 'break'
+        return None
+
+    def _select_all_files(self, event: tk.Event | None = None) -> str | None:
+        """
+        Select all files in the list.
+
+        Args:
+            event: Optional tkinter event when triggered by keyboard
+
+        Returns:
+            'break' if triggered by event to prevent default propagation, None otherwise
+        """
+        # Select all items
+        self.file_list.selection_set(self.file_list.get_children())
+
+        if event:
+            return 'break'
+        return None
     
     def _update_file_status(self, file_path: Path, status: str, error_message: str = '') -> None:
         """
