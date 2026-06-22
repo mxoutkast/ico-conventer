@@ -1,0 +1,3 @@
+## 2024-05-24 - Tkinter Keyboard Accessibility for Lists
+**Learning:** Tkinter Treeview/list widgets do not have default keyboard bindings for standard actions like deleting items (`<Delete>`, `<Backspace>`) or selecting all items (`<Control-a>`, `<Command-a>`).
+**Action:** Always manually bind standard keyboard shortcuts to Tkinter lists, and ensure there is a visual hint (like adding "(Del)" to a remove button) to make the shortcut discoverable for keyboard-reliant users.
