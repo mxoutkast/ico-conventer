@@ -1,0 +1,3 @@
+## 2024-06-23 - Explicit Keyboard Bindings for Custom Tkinter Widgets
+**Learning:** Tkinter Treeview widgets do not come with default keybindings for common list operations like `<Delete>`/`<BackSpace>` to remove items or `<Control-a>`/`<Command-a>` to select all. This omission significantly hurts keyboard accessibility and power user UX.
+**Action:** When building interactive lists or tables with Tkinter, explicitly bind deletion and multi-selection keys to the respective handler methods. Remember to trap `<Command-a>` bindings in a `try...except tk.TclError` to avoid breaking execution on non-macOS systems, and to have event handlers return `'break'` to prevent default Tkinter event propagation when handling keys.
