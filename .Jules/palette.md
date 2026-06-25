@@ -1,0 +1,3 @@
+## 2026-06-25 - Tkinter Treeview Keyboard Accessibility
+**Learning:** Tkinter Treeview widgets do not have default bindings for common actions like item deletion or select-all. They require explicit bindings to ensure proper keyboard accessibility. In addition, providing explicit visual hints in the UI for keyboard shortcuts (e.g., changing 'Remove Selected' to 'Remove Selected (Del)') significantly improves discoverability and UX.
+**Action:** When working with Tkinter Treeview widgets in the future, always explicitly bind <Delete>/<BackSpace> for removal and <Control-a>/<Command-a> for select-all, and update relevant UI labels to hint at these shortcuts.
