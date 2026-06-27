@@ -1,0 +1,3 @@
+## 2024-05-18 - Keyboard Shortcuts in Tkinter
+**Learning:** Tkinter Treeview widgets do not have default bindings for removing items (e.g., `<Delete>`) or selecting all items (e.g., `<Control-a>`). Adding these keyboard shortcuts, along with visual hints in the UI text (e.g., 'Remove Selected (Del)'), significantly improves usability and accessibility for power users. When creating bindings like `<Control-a>`, remember to return `'break'` to prevent default propagation, and gracefully handle OS-specific keys like `<Command-a>` with `try...except tk.TclError` to prevent crashes on non-macOS systems.
+**Action:** Always add explicit keyboard shortcuts and visual hints for list management features in Tkinter, and verify cross-platform safety for bindings.
