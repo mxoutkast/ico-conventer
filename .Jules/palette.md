@@ -1,0 +1,3 @@
+## 2024-06-28 - Explicit Keyboard Interaction in Tkinter
+**Learning:** Tkinter `Treeview` widgets don't come with built-in default keyboard shortcuts for standard file list actions (e.g. deletion with `<Delete>`/`<Backspace>`, or selecting all with `<Ctrl-a>`). They must be explicitly bound. Furthermore, it's crucial to provide visual hints for these expected interactions (like changing "Remove Selected" to "Remove Selected (Del)") and handling platform-specific errors (like `<Command-a>` on non-macOS systems throwing `tk.TclError`).
+**Action:** Always verify keyboard accessibility manually for Tkinter widgets and bind standard OS-level shortcut expectations while handling platform exceptions and adding visual cue indicators to the UI text.
