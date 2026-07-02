@@ -1,0 +1,3 @@
+## 2026-07-02 - Tkinter Treeview Keyboard Accessibility
+**Learning:** Tkinter Treeview widgets do not have default keyboard shortcuts for basic operations like 'Select All' or 'Delete'. Relying solely on buttons can make the UI inaccessible to power users or those relying on keyboard navigation. Adding explicit key bindings (`<Delete>`, `<BackSpace>`, `<Control-a>`, `<Command-a>`) and clear UI hints (e.g., 'Remove Selected (Del)') significantly improves UX and accessibility.
+**Action:** Always explicitly bind keyboard shortcuts for common actions in Tkinter list widgets and provide visible cues in the UI text for those shortcuts.
