@@ -1,0 +1,3 @@
+## 2024-07-03 - Explicit keyboard shortcuts in Tkinter Treeview
+**Learning:** When using Tkinter, Treeview widgets require explicit bindings for actions like item removal (`<Delete>`, `<BackSpace>`) and select all (`<Control-a>`, `<Command-a>`). Furthermore, cross-platform bindings (like macOS `<Command-a>`) must be wrapped in `try...except tk.TclError` to prevent crashes on non-macOS systems, and event handlers must return `"break"` to prevent default Tkinter event propagation.
+**Action:** Always implement explicit bindings for common keyboard actions in Tkinter Treeview widgets, wrap platform-specific bindings in `try...except`, and ensure handlers return `"break"` when overriding default behavior.
